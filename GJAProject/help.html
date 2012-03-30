@@ -1,0 +1,100 @@
+<html>
+<body>
+<h1>
+Mapování Výskytu Druhů - uživatelská nápověda
+</h1>
+Program slouží k interaktivnímu mapování výskytu druhů na chráněných územích. Podporuje sledování změn výskytových území v čase a vyhledávání druhů dle společných znaků. K automatickému stahování reálných map ze serveru <i>Bing Maps</i> &#169; vyžaduje připojení k internetu.
+<h2>
+Uživatelské rozhraní
+</h2>
+<b>Hlavní menu</b> programu slouží k rychlému přístupu k základním programovým funkcím:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Nový druh</b></td><td> - vložení nového sledovaného druhu</td>
+<tr><td><b>Editovat aktuální druh</b></td><td> - úprava vlastností druhu vybraného v panelu "Detail druhu"</td>
+<tr><td><b>Smazat aktuální druh</b></td><td> - smazání právě vybraného druhu v panelu <i>"Detail druhu"</i></td>
+<tr><td><b>Nová chráněná oblast</b></td><td> - vložení nové chráněné oblasti</td>
+<tr><td><b>Zobrazit chráněné oblasti</b></td><td> - zobrazení panelu chráněných oblastí</td>
+<tr><td><b>Nastavení</b></td><td> - konfigurace spojení s databází</td>
+</table><br>
+<b>Horní lišta</b> poskytuje následující funkce:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Zoom +/- </b></td><td> - přiblížení/oddálení mapy</td>
+<tr><td><b>Zobrazit druhy v okolí</b></td><td> - kliknutí na mapu ukáže druhy v okolí bodu</td>
+<tr><td><b>Zobrazení v čase</b></td><td> - posouvání v čase mezi různými mapy výskytu zvoleného druhu v panelu "Detail druhu"</td>
+<tr><td><b>Hledat</b></td><td> - zobrazí formulář vyhledávání druhu</td>
+<tr><td><b>Rychlé hledání</b></td><td> - hledání druhu při potvrzení Enter</td>
+</table><br>
+<b>Levý panel</b> slouží pro zobrazení statistik, vkládání, editaci a mazání dat:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Oblasti </b></td><td> - přehled a úprava sledovaných oblastí</td>
+<tr><td><b>Nová oblast</b></td><td> - vytvoření nebo editace nové oblasti</td>
+<tr><td><b>Nový druh</b></td><td> - vložení nového druhu do databáze</td>
+<tr><td><b>Detail druhu</b></td><td> - výběr druhu k zobrazení na mapě, statistiky</td>
+</table><br>
+<h2>
+Konfigurace připojení
+</h2>
+Menu <b>Nastavení</b> se automaticky zobrazí při nutnosti nastavení připojení k databázi (např. při prvním spuštění programu). Při běhu aplikace je přístupné přes hlavní menu <b>Soubor->Nastavení</b>.<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Připojení k databázi</b></td><td> - nastavení parametrů pro připojení k databázi</td>
+<tr><td><b>Vytvořit databázi</b></td><td> - spuštění instalačního skriptu databáze. <b>Varování: vymaže veškerá aktuální data!</b></td>
+<tr><td><b>Počáteční GPS souřadnice</b></td><td> - nastavení souřadnic na mapě při spuštění programu a výchozí přiblížení</td>
+</table><br>
+<h2>
+Navigace na mapě
+</h2>
+Interakce s mapou probíhá v hlavním okně prostřednictvím myši. Zvětšení obsahu mapy dosáhnete roztáhnutím okna aplikace.<br><br>
+Pro <b>posun</b> mapy stiskněte <b>levé tlačítko</b> a táhněte požadovaným směrem.<br>
+K <b>přiblížení / oddálení</b> mapy lze použít <b>kolečko myši</b> či tlačítka na horní liště.<br>
+Je-li zapnutý mód <i>"Zobrazit druhy v okolí"</i> na horní liště, jednoduchý <b>klik levým tlačítkem</b> myši na mapu vyvolá okno se statistikou o výskytu druhů.<br>
+<h2>
+Kreslení území
+</h2>
+Zadávat hranice chráněných území či map výskytu druhů (viz. níže) lze kreslením mnohoúhelníků do mapy.<br><br>
+<b>Nový vrchol</b> kresleného polygonu lze zadat klikem <b>levého tlačítka</b> myši do prostoru mapy nebo na hranu polygonu.<br>
+<b>Posunout</b> vrchol lze stlačením <b>levého tlačítka</b> myši nad vrcholem a táhnutím do stran.<br>
+<b>Odstranit</b> vrchol lze klikem <b>pravého tlačítka</b> myši.<br>
+Zadaný polygon <b>potvrdíte</b> stisknutíme klávesy <b>ENTER</b>.
+<h2>
+Chráněné oblasti
+</h2>
+Chráněné oblasti jsou na mapě označeny <font color="blue">modrou</font> barvou s příslušným názvem. Lze s nimi manipulovat v levém panelu <i>"Oblasti"</i>:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Přehled chráněných oblastí</b></td><td> - zobrazení okno s celkovými statistikami sledovaných oblastí</td>
+<tr><td><b>Zobrazit na mapě</b></td><td> - posune mapu na zvolené území</td>
+<tr><td><b>Editovat</b></td><td> - zobrazí panel s editací zvoleného území</td>
+<tr><td><b>Smazat</b></td><td> - vymaže zvolené území z databáze</td>
+<tr><td><b>Zobrazit statistiky</b></td><td> - zobrazí okno s geografickými údaji o zvoleném území a výskytu druhů</td>
+</table><br>
+Při <b>editaci/vkládání</b> nového území je aktivní mód kreslení do mapy (viz "Kreslení území").<br>
+<h2>
+Výskyt druhů
+</h2>
+Mapy výskytu zobrazíte na mapě výběrem druhu v panelu <i>"Detaily druhu"</i>. Oblasti výskytu druhů budou na mapě označeny <font color="red">červeně</font>.<br>
+Posuvníkem <i>"Zobrazení v čase"</i> na horní liště můžete zobrazovat další mapy výskytů vybraného druhu v čase (jsou-li k dispozici).<br>
+Tlačítky v dolní části panelu lze druh <i>"Editovat"</i> nebo <i>"Smazat"</i>.<br>
+<h2>
+Editace druhů
+</h2>
+V panelu pro editaci/vložení nového druhu můžete nastavit tyto vlastnosti:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Název</b></td><td> - název druhu</td>
+<tr><td><b>Latinský název</b></td><td> - latinský název druhu</td>
+<tr><td><b>Čeleď</b></td><td> - zařazení druhu do taxonomie</td>
+<tr><td><b>Odhad populace</b></td><td> - množství jedinců v oblasti výskytu</td>
+<tr><td><b>Popis</b></td><td> - textový popis druhu</td>
+<tr><td><b>Oblasti rozšíření</b></td><td> - vkládání/editace/mazání jednotlivých oblastí tvořících mapu výskytu druhu. Ovládání zadávání do mapy viz <i>"Kreslení území"</i>.</td>
+<tr><td><b>Obrázky</b></td><td> - seznam obrázků k daném druhu. <i>"Nový obrázek"</i> přidá obrázek z disku a umístí jej na vámi zvolené místo na mapě. <i>"Smazat obrázek"</i> odstraní obrázek ze seznamu.</td>
+</table><br>
+<h2>
+Vyhledávání druhů
+</h2>
+Vyhledávací formulář  lze otevřít tlačítkem <i>"Hledat"</i> vpravo na horní liště či zadáním hledaného textu do pole "Rychlé hledání" a potvrzení klávesou ENTER. Je možné použít 2 typy vyhledávání:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Fulltextové</b></td><td> - zadaný text se vyhledá v názvu, latinském názvu, čeledi a popisu druhu</td>
+<tr><td><b>Dle podobnosti fotografie</b></td><td> - tlačítkem <i>"Procházet"</i> vyberete fotografii z disku, <i>"Hledat"</i> spustí vyhledávání dle podobnosti. Výsledky lze ovlivnit parametry hledání v pravé části formuláře.</td>
+</table><br><br>
+Výsledky hledání se zobrazí v tabulce v dolní části formuláře. <b>Dvojitým kliknutím levého tlačítka</b> na druh jej vyberete pro <b>zobrazení mapy výskytu</b>.
+
+</body>
+</html>
