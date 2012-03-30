@@ -1,0 +1,10 @@
+-sourcepath 'D:\\java\\pdb\\trunk\\PDBProject\\src' 
+-subpackages cz.vutbr.fit.pdb.proj
+-exclude cz.vutbr.fit.pdb.proj.layouts
+-charset UTF-8
+-docencoding UTF-8
+-encoding UTF-8
+-d 'D:\\java\\pdb\\trunk\\PDBProject\\dist\\javadoc'
+-splitindex -use -windowtitle 'PDB Project'
+-classpath 'C:\\Program Files\\NetBeans 6.9.1\\java\\modules\\ext\\appframework-1.0.3.jar;C:\\Program Files\\NetBeans 6.9.1\\java\\modules\\ext\\swing-worker-1.1.jar;D:\\java\\pdb\\trunk\\PDBProject\\libs\\ojdbc6.jar;D:\\java\\pdb\\trunk\\PDBProject\\libs\\sdoapi.jar;D:\\java\\pdb\\trunk\\PDBProject\\libs\\ordim.jar;D:\\java\\pdb\\trunk\\PDBProject\\libs\\runtime12.jar;C:\\Program Files\\NetBeans 6.9.1\\java\\modules\\ext\\AbsoluteLayout.jar'
+-author -source 1.5
