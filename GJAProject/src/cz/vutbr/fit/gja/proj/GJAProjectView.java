@@ -212,6 +212,8 @@ public class GJAProjectView extends FrameView
         eRadius = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         leftPanel = new javax.swing.JPanel();
+        speedPanel1 = new cz.vutbr.fit.gja.proj.SpeedPanel();
+        altPanel1 = new cz.vutbr.fit.gja.proj.AltPanel();
         drawPanel1 = new cz.vutbr.fit.gja.proj.DrawPanel();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
@@ -354,6 +356,36 @@ public class GJAProjectView extends FrameView
         leftPanel.setName("leftPanel"); // NOI18N
         leftPanel.setPreferredSize(new java.awt.Dimension(280, 436));
         leftPanel.setLayout(new javax.swing.BoxLayout(leftPanel, javax.swing.BoxLayout.PAGE_AXIS));
+
+        speedPanel1.setName("speedPanel1"); // NOI18N
+
+        javax.swing.GroupLayout speedPanel1Layout = new javax.swing.GroupLayout(speedPanel1);
+        speedPanel1.setLayout(speedPanel1Layout);
+        speedPanel1Layout.setHorizontalGroup(
+            speedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
+        speedPanel1Layout.setVerticalGroup(
+            speedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
+
+        leftPanel.add(speedPanel1);
+
+        altPanel1.setName("altPanel1"); // NOI18N
+
+        javax.swing.GroupLayout altPanel1Layout = new javax.swing.GroupLayout(altPanel1);
+        altPanel1.setLayout(altPanel1Layout);
+        altPanel1Layout.setHorizontalGroup(
+            altPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
+        altPanel1Layout.setVerticalGroup(
+            altPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
+
+        leftPanel.add(altPanel1);
 
         drawPanel1.setName("drawPanel1"); // NOI18N
 
@@ -662,6 +694,7 @@ public class GJAProjectView extends FrameView
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private cz.vutbr.fit.gja.proj.AltPanel altPanel1;
     private cz.vutbr.fit.gja.proj.DrawPanel drawPanel1;
     private javax.swing.JSpinner eRadius;
     private javax.swing.JMenuItem helpMenuItem;
@@ -680,6 +713,7 @@ public class GJAProjectView extends FrameView
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JMenuItem settingMenuItem;
+    private cz.vutbr.fit.gja.proj.SpeedPanel speedPanel1;
     private javax.swing.JCheckBox statsField;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
