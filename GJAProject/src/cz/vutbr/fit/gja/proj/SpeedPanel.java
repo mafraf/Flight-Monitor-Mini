@@ -7,7 +7,7 @@ import javax.imageio.*;
 import java.awt.image.*;
 import java.awt.geom.AffineTransform;
 
-public class SpeedPanel extends JPanel
+public class SpeedPanel extends JPanel implements PanelInterface
 {
   private static Image img1 = null;
   private static Image img2 = null;
@@ -24,6 +24,36 @@ public class SpeedPanel extends JPanel
       this.setMinimumSize(d);
       this.setMaximumSize(d);
       this.setPreferredSize(d);
+      revalidate();
+    }
+    catch(IOException ex)
+    {
+      System.out.println("Iamge not load");
+    }
+  }
+
+  public void loadData()
+  {
+  
+  }
+  
+  public void setData()
+  {
+  
+  }
+  
+  public void changeSpeed(boolean slow)
+  {
+    try
+    {
+      if(slow)
+      {
+        img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed2.png"));  
+      }
+      else
+      {
+        img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed.png"));  
+      }
       revalidate();
     }
     catch(IOException ex)

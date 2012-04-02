@@ -7,17 +7,21 @@ import javax.imageio.*;
 import java.awt.image.*;
 import java.awt.geom.AffineTransform;
 
-public class AltPanel extends JPanel
+public class AltPanel extends JPanel implements PanelInterface
 {
   private static Image img1 = null;
   private static Image img2 = null;
   private static Image img3 = null;
-  private static double rotation1 = 270.0;
-  private static double rotation2 = 80.0;
+  private static double rotation1 = 50.0;
+  private static double rotation2 = 20.0;
+  private static Font f = null;
+  private String speed = null;
           
   public AltPanel()
   {
     super();
+    f = new Font("Arial", Font.BOLD, 24);
+    speed = new String("125");
     try
     {
       img1 = ImageIO.read(getClass().getResourceAsStream("resources/Alt.png"));
@@ -35,6 +39,16 @@ public class AltPanel extends JPanel
     }
   }
   
+  public void loadData()
+  {
+  
+  }
+  
+  public void setData()
+  {
+  
+  }
+  
   @Override
   public void paintComponent(Graphics g)
   {
@@ -43,9 +57,12 @@ public class AltPanel extends JPanel
     {
       g2d.drawImage(img1, 0, 0, null);
       g2d.rotate(Math.toRadians(rotation2), 100, 100);
-      g2d.drawImage(img3, 91, 50, null);
+      g2d.drawImage(img3, 90, 52, null);
       g2d.rotate(Math.toRadians(-rotation2+rotation1), 100, 100);
       g2d.drawImage(img2, 90, 28, null);
+      g2d.rotate(Math.toRadians(-rotation1), 100, 100);
+      g2d.setFont(f);
+      g2d.drawString(speed, 132, 107);
     }
     else
     {
