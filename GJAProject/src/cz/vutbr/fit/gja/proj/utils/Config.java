@@ -1,6 +1,7 @@
 
 package cz.vutbr.fit.gja.proj.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -21,30 +22,7 @@ public class Config implements Serializable {
    */
   public static String defaultConfigFile = "config";
 
-  /**
-   * URL DB serveru
-   */
-  private String serverURL;
 
-  /**
-   * port DB serveru
-   */
-  private int serverPort;
-
-  /**
-   * SID DB serveru
-   */
-  private String serverSID;
-
-  /**
-   * login pro DB server
-   */
-  private String login;
-
-  /**
-   * heslo pro DB server
-   */
-  private String password;
 
   /**
    * Cista instance (nevytvorena z ulozeneho kofiguracniho souboru)
@@ -60,7 +38,12 @@ public class Config implements Serializable {
    * Vychozi zoom mapy
    */
   private short mapZoom;
+  
+  /**
+   * Cesta k modelum
+   */
 
+  private String modelPath;
 
 
   /**
@@ -76,94 +59,38 @@ public class Config implements Serializable {
    * Nastaveni implicitnich hodnot
    */
   private void implicitValues() {
-    this.serverPort = 1521;
-    this.serverURL = "";
-    this.serverSID = "";
-    this.login = "";
-    this.password = "";
+
     this.mapCenter = new GPSPoint(50.119048, 17.05384);
     this.mapZoom = 11;
+    
+    try{
+      File dir1 = new File (".");
+      this.modelPath=dir1.getCanonicalPath();
+    }
+    catch(IOException _)
+    {
+      this.modelPath="";
+    }
+    
   }
 
   /**
-   * Vraci login
+   * Vraci cestu k modelu
    * @return
    */
-  public String getLogin() {
-    return login;
+  public String getModelPath() {
+    return modelPath;
   }
 
   /**
-   * Nastavi login pro pripojeni k DB
+   * Nastavi cestu modelu
    * @param login
    */
-  public void setLogin(String login) {
-    this.login = login;
+  public void setModelPath(String pth) {
+    this.modelPath=pth;
   }
 
-  /**
-   * Vraci heslo
-   * @return
-   */
-  public String getPassword() {
-    return password;
-  }
 
-  /**
-   * Nastavi heslo pro pripojeni k DB
-   * @param password
-   */
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  /**
-   * Vraci port pro pripojeni k DB
-   * @return
-   */
-  public int getServerPort() {
-    return serverPort;
-  }
-
-  /**
-   * Nastavi port pro pripojeni k DB
-   * @param serverPort
-   */
-  public void setServerPort(int serverPort) {
-    this.serverPort = serverPort;
-  }
-
-  /**
-   * Vraci SID pro pripojeni k DB
-   * @return 
-   */
-  public String getServerSID() {
-    return serverSID;
-  }
-
-  /**
-   * Nastavi SID pro pripojeni k DB
-   * @param serverSID
-   */
-  public void setServerSID(String serverSID) {
-    this.serverSID = serverSID;
-  }
-
-  /**
-   * Vraci URL adresu DB serveru
-   * @return
-   */
-  public String getServerURL() {
-    return serverURL;
-  }
-
-  /**
-   * Nastavi URL adresu DB serveru
-   * @param serverURL
-   */
-  public void setServerURL(String serverURL) {
-    this.serverURL = serverURL;
-  }
 
   /**
    * Vraci vychozi stred mapy
@@ -255,16 +182,5 @@ public class Config implements Serializable {
     return cfg;
   }
 
-
-  /**
-   * Vrati databazovy connection string
-   * @return
-   */
-  public String getConnectionString() {
-    // jdbc:oracle:thin:@berta.fit.vutbr.cz:1521:stud
-    String cs = "jdbc:oracle:thin:@" + this.serverURL + ":" + this.serverPort + ":" + this.serverSID;
-
-    return cs;
-  }
 
 }
