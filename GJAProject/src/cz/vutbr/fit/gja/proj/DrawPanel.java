@@ -85,6 +85,7 @@ public class DrawPanel extends JPanel implements Runnable
     /**Doplnujici soubor s obrazkem k polygonu*/
     protected Image mediaImage=null;
 
+    protected String mapType=BingMapsStat.TYPE_Aerial;
 
     /***************************************************************************
      * Editace jednoho polygonu
@@ -271,6 +272,16 @@ public class DrawPanel extends JPanel implements Runnable
             plist.add(BingMapsProjection.getCoords(geo, p, this.getControlPoint(), zoom));
         }
         this.points=plist;
+    }
+    
+    void setMapType(String type)
+    {
+      this.mapType=type;
+      removeMaps();
+      BingMapsStat.clearImageCache();
+      translateControlPoint(0,0);
+      loadMaps();
+      
     }
 
     /**
@@ -863,7 +874,7 @@ public class DrawPanel extends JPanel implements Runnable
             {
                 Point p=queueTile.pop();
                 GPSPoint gps=BingMapsProjection.adjustCoords(geo, p.x+MAP_WIDTH/2, p.y+MAP_HEIGHT/2, this.zoom);
-                mapsEngine.loadMapImage(MAP_WIDTH, MAP_HEIGHT, gps, this.zoom, BingMapsStat.TYPE_Aerial,p.x,p.y);
+                mapsEngine.loadMapImage(MAP_WIDTH, MAP_HEIGHT, gps, this.zoom, mapType,p.x,p.y);
                 Image map = mapsEngine.getImage();
                 MapPicture mp=new MapPicture(map,gps,p);
                 this.maps.add(mp);
@@ -1251,10 +1262,8 @@ public class DrawPanel extends JPanel implements Runnable
                     if(!content.isAncestorOf(statsPanel))
                         add(statsPanel);
                     statsPanel.setBounds(evt.getX()+DIAMETER,evt.getY()+DIAMETER, STATS_WIDTH,STATS_HEIGHT);
-
-                    double radius = ((GJAProjectView)Application.getInstance(GJAProjectApp.class).getMainView()).getRadiusValue();
-
-                    statsPanel.setGPS(BingMapsProjection.getGPS(geo, controlPoint, evt.getPoint(), zoom), radius);
+ 
+                    statsPanel.setGPS(BingMapsProjection.getGPS(geo, controlPoint, evt.getPoint(), zoom), 1.0);
                     statsPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                     statsPanel.repaint();
                     statsPanel.revalidate();

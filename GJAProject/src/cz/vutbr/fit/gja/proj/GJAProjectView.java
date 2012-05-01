@@ -7,6 +7,7 @@ package cz.vutbr.fit.gja.proj;
 import cz.vutbr.fit.gja.proj.utils.BingMapsStat;
 import cz.vutbr.fit.gja.proj.utils.Globals;
 import cz.vutbr.fit.gja.proj.utils.GPSPoint;
+import cz.vutbr.fit.gja.proj.utils.ModelData;
 import java.awt.Image;
 import java.awt.Toolkit;
 import org.jdesktop.application.Action;
@@ -65,6 +66,8 @@ public class GJAProjectView extends FrameView
      * Datum konce intervalu platnosti
      */
     private ArrayList<Calendar> dateToList=new ArrayList<Calendar>();
+    
+    
 
 
     /**
@@ -203,14 +206,11 @@ public class GJAProjectView extends FrameView
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        statsField = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
         timeSlider = new javax.swing.JSlider();
         timeLabel = new javax.swing.JLabel();
-        eRadius = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
         leftPanel = new javax.swing.JPanel();
         speedPanel1 = new cz.vutbr.fit.gja.proj.SpeedPanel();
         altPanel1 = new cz.vutbr.fit.gja.proj.AltPanel();
@@ -261,23 +261,6 @@ public class GJAProjectView extends FrameView
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
-        jTextField1.setText(resourceMap.getString("searchField.text")); // NOI18N
-        jTextField1.setName("searchField"); // NOI18N
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField1KeyReleased(evt);
-            }
-        });
-
-        jButton4.setAction(actionMap.get("btnSearchClick")); // NOI18N
-        jButton4.setIcon(resourceMap.getIcon("jButton4.icon")); // NOI18N
-        jButton4.setText(resourceMap.getString("jButton4.text")); // NOI18N
-        jButton4.setName("jButton4"); // NOI18N
-
-        statsField.setAction(actionMap.get("statsClicked")); // NOI18N
-        statsField.setText(resourceMap.getString("statsField.text")); // NOI18N
-        statsField.setName("statsField"); // NOI18N
-
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
 
@@ -297,11 +280,16 @@ public class GJAProjectView extends FrameView
         timeLabel.setName("timeLabel"); // NOI18N
         timeLabel.setPreferredSize(new java.awt.Dimension(100, 20));
 
-        eRadius.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(1.0d), Double.valueOf(0.0d), null, Double.valueOf(0.5d)));
-        eRadius.setName("eRadius"); // NOI18N
-
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
         jLabel3.setName("jLabel3"); // NOI18N
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Letecká", "Standardní" }));
+        jComboBox1.setName("jComboBox1"); // NOI18N
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -311,11 +299,7 @@ public class GJAProjectView extends FrameView
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(statsField)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(eRadius, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(194, 194, 194)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
@@ -323,13 +307,10 @@ public class GJAProjectView extends FrameView
                 .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(jButton4)
-                .addGap(18, 18, 18)
+                .addGap(127, 127, 127)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,12 +319,9 @@ public class GJAProjectView extends FrameView
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(timeSlider, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
-                            .addComponent(jButton4))
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(statsField, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                            .addComponent(eRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3)
                             .addComponent(jLabel2)))
                     .addComponent(jButton2)
@@ -538,10 +516,10 @@ public class GJAProjectView extends FrameView
         }
     }//GEN-LAST:event_timeSliderStateChanged
 
-    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
-      //if (evt.getKeyCode() == KeyEvent.VK_ENTER)
-       // searchForm.showSearch(this.jTextField1.getText());
-    }//GEN-LAST:event_jTextField1KeyReleased
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+      // TODO add your handling code here:
+      drawPanel1.setMapType(jComboBox1.getSelectedIndex()==0 ? BingMapsStat.TYPE_Aerial : BingMapsStat.TYPE_ROAD);
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * Testovaci akce - vymazani vsech mapovych podkladu
@@ -696,25 +674,22 @@ public class GJAProjectView extends FrameView
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private cz.vutbr.fit.gja.proj.AltPanel altPanel1;
     private cz.vutbr.fit.gja.proj.DrawPanel drawPanel1;
-    private javax.swing.JSpinner eRadius;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JMenuItem settingMenuItem;
     private cz.vutbr.fit.gja.proj.SpeedPanel speedPanel1;
-    private javax.swing.JCheckBox statsField;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
@@ -832,12 +807,5 @@ public class GJAProjectView extends FrameView
         //jd.setVisible(true);
     }
 
-    /**
-     * Vraci hodnotu zadanou v poli radius - vyhledavani v okoli xx kilometru
-     * @return Radius vyhledavani v kilometrech
-     */
-    public double getRadiusValue() {
-      return (Double)this.eRadius.getValue();
-    }
-
+  
 }

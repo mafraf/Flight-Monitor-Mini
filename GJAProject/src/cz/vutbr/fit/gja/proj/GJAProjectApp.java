@@ -4,7 +4,8 @@
 
 package cz.vutbr.fit.gja.proj;
 
-import cz.vutbr.fit.gja.proj.utils.Config;
+import cz.vutbr.fit.gja.proj.utils.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -20,6 +21,11 @@ public class GJAProjectApp extends SingleFrameApplication {
      * Konfigurace aplikace
      */
     private Config configuration;
+    
+    /**
+     * Seznam modelu - prozacatku inicializovane,aby nehazelo Null Pointer
+     */
+    private ArrayList<ModelData> modelParams=new ArrayList<ModelData>();
 
     /**
      * Pole s parametry spusteni programu
@@ -36,6 +42,13 @@ public class GJAProjectApp extends SingleFrameApplication {
      */
     public Config getConfiguration() {
       return configuration;
+    }
+    
+    /*
+     * Vrati seznam platnych modelu
+     */
+    public ArrayList<ModelData> getModelData() {
+      return modelParams;
     }
 
 
@@ -69,6 +82,7 @@ public class GJAProjectApp extends SingleFrameApplication {
     @Override protected void startup() {
       // nacteni konfigurace
       this.configuration = Config.loadConfig(Config.defaultConfigFile);
+      this.modelParams=ModelData.LoadModels(configuration.getModelPath()+"/"+ModelData.MODEL_FILE); 
  
 
       // zobrazit hlavni formular

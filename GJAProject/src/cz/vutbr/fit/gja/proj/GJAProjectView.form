@@ -74,11 +74,7 @@
                       <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="statsField" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="eRadius" min="-2" pref="49" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="194" max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
@@ -86,13 +82,10 @@
                       <Component id="timeSlider" pref="290" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="timeLabel" min="-2" pref="136" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-                      <Component id="jButton4" min="-2" max="-2" attributes="1"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="127" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jTextField1" min="-2" pref="123" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="jComboBox1" min="-2" pref="141" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -103,13 +96,10 @@
                           <Group type="103" alignment="1" groupAlignment="1" attributes="0">
                               <Component id="timeSlider" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
                               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                  <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                  <Component id="statsField" alignment="3" pref="25" max="32767" attributes="1"/>
-                                  <Component id="eRadius" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -155,34 +145,6 @@
                 <Property name="name" type="java.lang.String" value="jLabel1" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextField1">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="searchField.text"/>
-                <Property name="name" type="java.lang.String" value="searchField" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField1KeyReleased"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="jButton4">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="cz.vutbr.fit.gja.proj.PDBProjectView" id="btnSearchClick" methodName="btnSearchClick"/>
-                </Property>
-                <Property name="icon" type="javax.swing.Icon" resourceKey="jButton4.icon"/>
-                <Property name="text" type="java.lang.String" resourceKey="jButton4.text"/>
-                <Property name="name" type="java.lang.String" value="jButton4" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="statsField">
-              <Properties>
-                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                  <action class="cz.vutbr.fit.gja.proj.PDBProjectView" id="statsClicked" methodName="statsClicked"/>
-                </Property>
-                <Property name="text" type="java.lang.String" resourceKey="statsField.text"/>
-                <Property name="name" type="java.lang.String" value="statsField" noResource="true"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
@@ -211,19 +173,25 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="eRadius">
-              <Properties>
-                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="1.0" minimum="0.0" numberType="java.lang.Double" stepSize="0.5" type="number"/>
-                </Property>
-                <Property name="name" type="java.lang.String" value="eRadius" noResource="true"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="jLabel3">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="jLabel3.text"/>
                 <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="jComboBox1">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="2">
+                    <StringItem index="0" value="Leteck&#xe1;"/>
+                    <StringItem index="1" value="Standardn&#xed;"/>
+                  </StringArray>
+                </Property>
+                <Property name="name" type="java.lang.String" value="jComboBox1" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox1ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
