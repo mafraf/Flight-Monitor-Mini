@@ -219,6 +219,7 @@ public class GJAProjectView extends FrameView
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem1 = new javax.swing.JMenuItem();
         settingMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
@@ -411,6 +412,11 @@ public class GJAProjectView extends FrameView
 
         jSeparator1.setName("jSeparator1"); // NOI18N
         fileMenu.add(jSeparator1);
+
+        jMenuItem1.setAction(actionMap.get("modelyClicked")); // NOI18N
+        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
+        jMenuItem1.setName("jMenuItem1"); // NOI18N
+        fileMenu.add(jMenuItem1);
 
         settingMenuItem.setAction(actionMap.get("settingClicked")); // NOI18N
         settingMenuItem.setText(resourceMap.getString("settingMenuItem.text")); // NOI18N
@@ -681,6 +687,7 @@ public class GJAProjectView extends FrameView
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
@@ -806,6 +813,12 @@ public class GJAProjectView extends FrameView
         //jd.setLocationRelativeTo(mainFrame);
         //jd.setVisible(true);
     }
+
+  @Action
+  public void modelyClicked() {
+    ModelFrame panel=new ModelFrame();
+    panel.setVisible(true);
+  }
 
   
 }
