@@ -1,7 +1,9 @@
 package cz.vutbr.fit.gja.proj;
 
+import cz.vutbr.fit.gja.proj.utils.*;
+
 public interface PanelInterface 
 {
-  public void loadData();
-  public void setData();
+  public void setData(TelemetryData.TelemetryItem item);
+  public void changeSpeed(boolean slow);  
 }

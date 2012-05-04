@@ -6,25 +6,27 @@ import java.io.*;
 import javax.imageio.*;
 import java.awt.image.*;
 import java.awt.geom.AffineTransform;
+import cz.vutbr.fit.gja.proj.utils.*;
 
 public class SpeedPanel extends JPanel implements PanelInterface
 {
-  private static Image img1 = null;
-  private static Image img2 = null;
-  private static double rotation = 45.0;
+  private Image img1 = null;
+  private Image img2 = null;
+  private double rotation = 0.0;
+  private double max = 120.0;
           
   public SpeedPanel()
   {
     super();
     try
     {
-      img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed.png"));
+      img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed2.png"));
       img2 = ImageIO.read(getClass().getResourceAsStream("resources/Pointer.png"));
-      Dimension d = new Dimension(200, 200);
+      Dimension d = new Dimension(210, 210);
       this.setMinimumSize(d);
       this.setMaximumSize(d);
       this.setPreferredSize(d);
-      revalidate();
+      this.setNumber(65);
     }
     catch(IOException ex)
     {
@@ -32,14 +34,30 @@ public class SpeedPanel extends JPanel implements PanelInterface
     }
   }
 
-  public void loadData()
+   public void setNumber(int start)
   {
-  
+    if(this.max == 120.0)
+    {
+      if(start > 120)
+      {
+        start = 120;
+      }
+      this.rotation = (360.0/(max/(double)start));
+    }
+    else
+    {
+      if(start > 260)
+      {
+        start = 260;
+      }
+      this.rotation = 360.0/(max/(double)(start)) - 28.0 + ((((double)start - 20.0)/60.0)*7.0);    
+    }
+    revalidate();   
   }
   
-  public void setData()
+  public void setData(TelemetryData.TelemetryItem item)
   {
-  
+    this.setNumber((int)item.getDouble());
   }
   
   public void changeSpeed(boolean slow)
@@ -49,16 +67,18 @@ public class SpeedPanel extends JPanel implements PanelInterface
       if(slow)
       {
         img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed2.png"));  
+        this.max = 120.0;
       }
       else
       {
-        img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed.png"));  
+        img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed.png")); 
+        this.max = 260.0;
       }
       revalidate();
     }
     catch(IOException ex)
     {
-      System.out.println("Iamge not load");
+      System.out.println("Image not load");
     }
   }
   
