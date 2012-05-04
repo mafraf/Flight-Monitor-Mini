@@ -21,6 +21,11 @@ public class GJAProjectApp extends SingleFrameApplication {
      * Konfigurace aplikace
      */
     private Config configuration;
+
+    /**
+     * Data z telemetrickych cidel
+     */
+    private TelemetryData telemetry=new TelemetryData();
     
     /**
      * Seznam modelu - prozacatku inicializovane,aby nehazelo Null Pointer
@@ -42,6 +47,10 @@ public class GJAProjectApp extends SingleFrameApplication {
      */
     public Config getConfiguration() {
       return configuration;
+    }
+
+    public TelemetryData getTelemetry(){
+      return telemetry;
     }
     
     /*

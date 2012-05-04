@@ -45,6 +45,9 @@ public class Config implements Serializable {
 
   private String modelPath;
 
+   /** Typ mapy pouzity v zobrazeni */
+  private String mapType;
+
 
   /**
    * Vychozi konstruktor
@@ -62,6 +65,7 @@ public class Config implements Serializable {
 
     this.mapCenter = new GPSPoint(50.119048, 17.05384);
     this.mapZoom = 11;
+    this.mapType=BingMapsStat.TYPE_ROAD;
     
     try{
       File dir1 = new File (".");
@@ -90,6 +94,21 @@ public class Config implements Serializable {
     this.modelPath=pth;
   }
 
+   /**
+   * Vraci typ mapy
+   * @return
+   */
+  public String getMapType() {
+    return mapType;
+  }
+
+  /**
+   * Nastavi typ mapy
+   * @param login
+   */
+  public void setMapType(String type) {
+    this.mapType=type;
+  }
 
 
   /**

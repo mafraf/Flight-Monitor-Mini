@@ -304,9 +304,12 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="cz.vutbr.fit.gja.proj.GJAProjectView" id="modelyClicked" methodName="modelyClicked"/>
                 </Property>
-                <Property name="text" type="java.lang.String" resourceKey="jMenuItem1.text"/>
+                <Property name="label" type="java.lang.String" resourceKey="jMenuItem1.label"/>
                 <Property name="name" type="java.lang.String" value="jMenuItem1" noResource="true"/>
               </Properties>
+              <AccessibilityProperties>
+                <Property name="AccessibleContext.accessibleName" type="java.lang.String" resourceKey="jMenuItem1.AccessibleContext.accessibleName"/>
+              </AccessibilityProperties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="settingMenuItem">
               <Properties>

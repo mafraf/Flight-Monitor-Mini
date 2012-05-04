@@ -4,10 +4,7 @@
 package cz.vutbr.fit.gja.proj;
 
 
-import cz.vutbr.fit.gja.proj.utils.BingMapsStat;
-import cz.vutbr.fit.gja.proj.utils.Globals;
-import cz.vutbr.fit.gja.proj.utils.GPSPoint;
-import cz.vutbr.fit.gja.proj.utils.ModelData;
+import cz.vutbr.fit.gja.proj.utils.*;
 import java.awt.Image;
 import java.awt.Toolkit;
 import org.jdesktop.application.Action;
@@ -20,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.ImageObserver;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +30,7 @@ import java.util.TimeZone;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import org.jdesktop.application.Application;
 
 
@@ -58,6 +57,7 @@ public class GJAProjectView extends FrameView
     private int speciesId=0;
     /**Index do vybrane historie */
     private int historyIndex=0;
+
     /**
      * Datum zacatku intervalu platnosti
      */
@@ -164,6 +164,9 @@ public class GJAProjectView extends FrameView
 
         this.getFrame().pack();
 
+        Config cfg=Application.getInstance(GJAProjectApp.class).getConfiguration();
+        drawPanel1.setMapType(cfg.getMapType());
+        jComboBox1.setSelectedIndex(cfg.getMapType().equals(BingMapsStat.TYPE_Aerial) ? 0 : 1);
 
         
         
@@ -414,9 +417,10 @@ public class GJAProjectView extends FrameView
         fileMenu.add(jSeparator1);
 
         jMenuItem1.setAction(actionMap.get("modelyClicked")); // NOI18N
-        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
+        jMenuItem1.setLabel(resourceMap.getString("jMenuItem1.label")); // NOI18N
         jMenuItem1.setName("jMenuItem1"); // NOI18N
         fileMenu.add(jMenuItem1);
+        jMenuItem1.getAccessibleContext().setAccessibleName(resourceMap.getString("jMenuItem1.AccessibleContext.accessibleName")); // NOI18N
 
         settingMenuItem.setAction(actionMap.get("settingClicked")); // NOI18N
         settingMenuItem.setText(resourceMap.getString("settingMenuItem.text")); // NOI18N
@@ -523,8 +527,15 @@ public class GJAProjectView extends FrameView
     }//GEN-LAST:event_timeSliderStateChanged
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-      // TODO add your handling code here:
-      drawPanel1.setMapType(jComboBox1.getSelectedIndex()==0 ? BingMapsStat.TYPE_Aerial : BingMapsStat.TYPE_ROAD);
+      String str=jComboBox1.getSelectedIndex()==0 ? BingMapsStat.TYPE_Aerial : BingMapsStat.TYPE_ROAD;
+      drawPanel1.setMapType(str);
+      try{
+      Config cfg=Application.getInstance(GJAProjectApp.class).getConfiguration();
+      cfg.setMapType(str);
+      cfg.saveConfig(Config.defaultConfigFile);
+      } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
+      }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
@@ -816,8 +827,30 @@ public class GJAProjectView extends FrameView
 
   @Action
   public void modelyClicked() {
-    ModelFrame panel=new ModelFrame();
-    panel.setVisible(true);
+    TelemetryData data = Application.getInstance(GJAProjectApp.class).getTelemetry();
+    Config cfg=Application.getInstance(GJAProjectApp.class).getConfiguration();
+
+    String wd = cfg.getModelPath();
+    JFileChooser fc = new JFileChooser(wd);
+    fc.setFileFilter(new FileFilter() {
+
+      @Override
+      public boolean accept(File f) {
+        return f.isDirectory() || f.getName().toLowerCase().endsWith(".log") || f.getName().toLowerCase().endsWith(".jml");
+      }
+
+      @Override
+      public String getDescription() {
+        return "Datové typy (*.log, *.jml)";
+      }
+    });
+    int rc = fc.showDialog(null, "Vyberte datový soubor");
+    if (rc == JFileChooser.APPROVE_OPTION) {
+      File file = fc.getSelectedFile();
+      String filename = file.getAbsolutePath();
+      data.loadData(filename);
+    }
+    return;
   }
 
   
