@@ -996,6 +996,8 @@ public class DrawPanel extends JPanel implements Runnable
      */
     private boolean isIncluded(int x,int y)
     {
+      if(queueTile==null)
+        return false;
         for(int i=0;i<queueTile.size();i++)
         {
             Point p = queueTile.get(i);

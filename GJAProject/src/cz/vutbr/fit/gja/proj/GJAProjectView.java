@@ -5,8 +5,10 @@ package cz.vutbr.fit.gja.proj;
 
 
 import cz.vutbr.fit.gja.proj.utils.*;
+import cz.vutbr.fit.gja.proj.utils.TelemetryData.TelemetrySensor;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.TreeSet;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -26,7 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
+//import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -53,19 +55,15 @@ public class GJAProjectView extends FrameView
     //private SearchForm searchForm;
     /**Ukazatel na casovy slider*/
     private int timeIndex=1;
-    /**ID daneho druhu*/
-    private int speciesId=0;
-    /**Index do vybrane historie */
-    private int historyIndex=0;
+    private double time=0.0;
+   
 
-    /**
-     * Datum zacatku intervalu platnosti
-     */
-    private ArrayList<Calendar> dateList=new ArrayList<Calendar>();
-    /**
-     * Datum konce intervalu platnosti
-     */
-    private ArrayList<Calendar> dateToList=new ArrayList<Calendar>();
+    
+    
+    private TelemetryData data;
+    private Timer animationTimer;
+    /** Priznak zablokovani zmeny stavu timeSlideru **/
+    private boolean sliderDisable=false;
     
     
 
@@ -79,6 +77,30 @@ public class GJAProjectView extends FrameView
         super(app);
 
         initComponents();
+        data = Application.getInstance(GJAProjectApp.class).getTelemetry();
+        animationTimer=new Timer(50,new ActionListener()
+        {
+
+            public void actionPerformed(ActionEvent e)
+            {
+                time+=50.0/1000.0 * (double)animationSpinner.getValue();
+                if(time>data.getMaxTimestamp())
+                {
+                  animationTimer.stop();
+                  stopBtn.setEnabled(false);
+                  playBtn.setEnabled(true);
+                }
+                else
+                {
+                  //Aktualizuje polozky
+                  sliderDisable=true;
+                  timeSlider.setValue((int)time);
+                  sliderDisable=false;
+                  updateDisplayData();
+                }
+            }
+        });
+        animationTimer.setRepeats(true);
 
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
@@ -212,12 +234,26 @@ public class GJAProjectView extends FrameView
         jLabel2 = new javax.swing.JLabel();
         timeSlider = new javax.swing.JSlider();
         timeLabel = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
+        stopBtn = new javax.swing.JButton();
+        playBtn = new javax.swing.JButton();
+        animationSpinner = new javax.swing.JSpinner();
+        jLabel5 = new javax.swing.JLabel();
         leftPanel = new javax.swing.JPanel();
-        speedPanel1 = new cz.vutbr.fit.gja.proj.SpeedPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        altComboBox = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
         altPanel1 = new cz.vutbr.fit.gja.proj.AltPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        speedComboBox = new javax.swing.JComboBox();
+        speedPanel1 = new cz.vutbr.fit.gja.proj.SpeedPanel();
+        jSplitPane1 = new javax.swing.JSplitPane();
         drawPanel1 = new cz.vutbr.fit.gja.proj.DrawPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel4 = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -279,13 +315,15 @@ public class GJAProjectView extends FrameView
                 timeSliderStateChanged(evt);
             }
         });
+        timeSlider.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                timeSliderPropertyChange(evt);
+            }
+        });
 
         timeLabel.setText(resourceMap.getString("timeLabel.text")); // NOI18N
         timeLabel.setName("timeLabel"); // NOI18N
         timeLabel.setPreferredSize(new java.awt.Dimension(100, 20));
-
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Letecká", "Standardní" }));
         jComboBox1.setName("jComboBox1"); // NOI18N
@@ -295,6 +333,25 @@ public class GJAProjectView extends FrameView
             }
         });
 
+        stopBtn.setAction(actionMap.get("stopClicked")); // NOI18N
+        stopBtn.setIcon(resourceMap.getIcon("stopBtn.icon")); // NOI18N
+        stopBtn.setText(resourceMap.getString("stopBtn.text")); // NOI18N
+        stopBtn.setEnabled(false);
+        stopBtn.setName("stopBtn"); // NOI18N
+
+        playBtn.setAction(actionMap.get("PlayClicked")); // NOI18N
+        playBtn.setIcon(resourceMap.getIcon("playBtn.icon")); // NOI18N
+        playBtn.setText(resourceMap.getString("playBtn.text")); // NOI18N
+        playBtn.setEnabled(false);
+        playBtn.setName("playBtn"); // NOI18N
+
+        animationSpinner.setModel(new SpinnerNumberModel(1.0, 0.0, 100.0, 0.1));
+        animationSpinner.setName("animationSpinner"); // NOI18N
+        animationSpinner.setValue(1.0);
+
+        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setName("jLabel5"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -303,15 +360,21 @@ public class GJAProjectView extends FrameView
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addGap(194, 194, 194)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
+                .addGap(225, 225, 225)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                .addGap(101, 101, 101)
+                .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(127, 127, 127)
+                .addComponent(animationSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(playBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(stopBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -319,40 +382,53 @@ public class GJAProjectView extends FrameView
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(timeSlider, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)))
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(3, 3, 3)
+                .addComponent(jLabel1)
+                .addGap(26, 26, 26))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(23, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(18, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jButton2)
+                .addContainerGap(19, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addContainerGap(29, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(timeSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, Short.MAX_VALUE)
+                    .addComponent(playBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 25, Short.MAX_VALUE)
+                    .addComponent(stopBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(animationSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                        .addComponent(jLabel5)))
+                .addGap(18, 18, 18))
         );
+
+        playBtn.getAccessibleContext().setAccessibleName(resourceMap.getString("playBtn.AccessibleContext.accessibleName")); // NOI18N
+        playBtn.getAccessibleContext().setAccessibleDescription(resourceMap.getString("playBtn.AccessibleContext.accessibleDescription")); // NOI18N
 
         leftPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 5, 1, 1));
         leftPanel.setName("leftPanel"); // NOI18N
         leftPanel.setPreferredSize(new java.awt.Dimension(280, 436));
-        leftPanel.setLayout(new javax.swing.BoxLayout(leftPanel, javax.swing.BoxLayout.PAGE_AXIS));
 
-        speedPanel1.setName("speedPanel1"); // NOI18N
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        javax.swing.GroupLayout speedPanel1Layout = new javax.swing.GroupLayout(speedPanel1);
-        speedPanel1.setLayout(speedPanel1Layout);
-        speedPanel1Layout.setHorizontalGroup(
-            speedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
-        );
-        speedPanel1Layout.setVerticalGroup(
-            speedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
-        );
+        jPanel5.setName("jPanel5"); // NOI18N
+        jPanel5.setPreferredSize(new java.awt.Dimension(250, 550));
 
-        leftPanel.add(speedPanel1);
+        jPanel2.setName("jPanel2"); // NOI18N
+
+        altComboBox.setName("comboAltDataType"); // NOI18N
+
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
 
         altPanel1.setName("altPanel1"); // NOI18N
 
@@ -367,7 +443,112 @@ public class GJAProjectView extends FrameView
             .addGap(0, 200, Short.MAX_VALUE)
         );
 
-        leftPanel.add(altPanel1);
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(altPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(altComboBox, 0, 210, Short.MAX_VALUE))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(altComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(altPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(76, Short.MAX_VALUE))
+        );
+
+        jPanel3.setName("jPanel3"); // NOI18N
+
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+
+        speedComboBox.setName("comboSpeedDataType"); // NOI18N
+
+        speedPanel1.setName("speedPanel1"); // NOI18N
+
+        javax.swing.GroupLayout speedPanel1Layout = new javax.swing.GroupLayout(speedPanel1);
+        speedPanel1.setLayout(speedPanel1Layout);
+        speedPanel1Layout.setHorizontalGroup(
+            speedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 201, Short.MAX_VALUE)
+        );
+        speedPanel1Layout.setVerticalGroup(
+            speedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 210, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(speedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(speedComboBox, 0, 201, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(speedComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(speedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, 0, 265, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(83, Short.MAX_VALUE))
+        );
+
+        jScrollPane1.setViewportView(jPanel5);
+
+        javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
+        leftPanel.setLayout(leftPanelLayout);
+        leftPanelLayout.setHorizontalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+        );
+        leftPanelLayout.setVerticalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+        );
+
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane1.setName("jSplitPane1"); // NOI18N
 
         drawPanel1.setName("drawPanel1"); // NOI18N
 
@@ -375,22 +556,42 @@ public class GJAProjectView extends FrameView
         drawPanel1.setLayout(drawPanel1Layout);
         drawPanel1Layout.setHorizontalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 877, Short.MAX_VALUE)
+            .addGap(0, 678, Short.MAX_VALUE)
         );
         drawPanel1Layout.setVerticalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 513, Short.MAX_VALUE)
+            .addGap(0, 319, Short.MAX_VALUE)
         );
+
+        jSplitPane1.setTopComponent(drawPanel1);
+
+        jTabbedPane1.setName("jTabbedPane1"); // NOI18N
+
+        jPanel4.setName("jPanel4"); // NOI18N
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 673, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 320, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
+
+        jSplitPane1.setRightComponent(jTabbedPane1);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(drawPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE))
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
@@ -399,10 +600,8 @@ public class GJAProjectView extends FrameView
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(drawPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)))
+                    .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -464,11 +663,11 @@ public class GJAProjectView extends FrameView
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 1194, Short.MAX_VALUE)
+            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 970, Short.MAX_VALUE)
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1024, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 800, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -500,32 +699,17 @@ public class GJAProjectView extends FrameView
      * @param evt
      */
     private void timeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_timeSliderStateChanged
-      System.out.println(timeSlider.getValue());
-        if(timeSlider.getValue() !=timeIndex)
-        {
-           /* timeIndex=timeSlider.getValue();
-            if(timeIndex<1 || Globals.species==null) return;
-            Calendar c=dateList.get(timeIndex-1);
-            Calendar dateTo = dateToList.get(timeIndex-1);
-            SpecAreas area=Globals.species.getAreas();
-            if(timeIndex==dateList.size())
-            {
-                setDate(c.getTime(), null);
-                area.selectAtTime();
-            }
-            else
-            {
-                setDate(c.getTime(), dateTo.getTime());
-                area.selectAtTime(c);
-            }
-            area.next();
-            
-            Globals.fireSpeciesChangedEvent("",0);*/
-            
 
-        }
+      if(!sliderDisable)
+      {
+        time=(int)timeSlider.getValue();
+        updateDisplayData();
+      }
     }//GEN-LAST:event_timeSliderStateChanged
 
+    /** 
+     * Zmena typu mapy
+     */
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
       String str=jComboBox1.getSelectedIndex()==0 ? BingMapsStat.TYPE_Aerial : BingMapsStat.TYPE_ROAD;
       drawPanel1.setMapType(str);
@@ -537,6 +721,12 @@ public class GJAProjectView extends FrameView
         JOptionPane.showMessageDialog(null, e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
       }
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void timeSliderPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_timeSliderPropertyChange
+      // TODO add your handling code here:
+      
+      
+    }//GEN-LAST:event_timeSliderPropertyChange
 
     /**
      * Testovaci akce - vymazani vsech mapovych podkladu
@@ -689,7 +879,9 @@ public class GJAProjectView extends FrameView
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox altComboBox;
     private cz.vutbr.fit.gja.proj.AltPanel altPanel1;
+    private javax.swing.JSpinner animationSpinner;
     private cz.vutbr.fit.gja.proj.DrawPanel drawPanel1;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JButton jButton2;
@@ -698,19 +890,31 @@ public class GJAProjectView extends FrameView
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton playBtn;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JMenuItem settingMenuItem;
+    private javax.swing.JComboBox speedComboBox;
     private cz.vutbr.fit.gja.proj.SpeedPanel speedPanel1;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JButton stopBtn;
     private javax.swing.JLabel timeLabel;
     private javax.swing.JSlider timeSlider;
     // End of variables declaration//GEN-END:variables
@@ -728,62 +932,7 @@ public class GJAProjectView extends FrameView
 
 
 
-    
-
-    /**
-     *
-     * Nastavi casovy posuvnik podle dodanych dat
-     */
-    private void setTimeView()
-    {
-        /*if(Globals.species==null)
-        {
-            timeSlider.setMaximum(1);
-            timeSlider.setMinimum(1);
-            timeSlider.setValue(1);
-            timeSlider.setEnabled(false);
-            dateList.clear();
-            dateToList.clear();
-            timeIndex=1;
-            setDate(null, null);
-        }
-        else
-        {
-            
-            
-            SpecAreas area=Globals.species.getAreas();
-            area.selectHistory();
-            int cnt=0;
-            dateList.clear();
-            dateToList.clear();
-            while(area.next())
-            {
-                dateList.add(area.valid_from);
-                dateToList.add(area.valid_to);
-                cnt++;
-            }
-
-
-            //dateList.add(Calendar.getInstance());
-            timeSlider.setMaximum(cnt);
-            timeSlider.setMinimum(1);
-            timeSlider.setMajorTickSpacing(1);
-            timeSlider.setMinorTickSpacing(1);
-            if(Globals.species.id!=speciesId || historyIndex!=cnt)
-            {
-                historyIndex=cnt;
-                speciesId=Globals.species.id;
-                timeSlider.setValue(cnt);
-                timeSlider.setEnabled(true);
-                timeIndex=cnt;
-
-                if (cnt > 0)
-                  setDate(area.valid_from.getTime(), null);
-                else
-                  setDate(null, null);
-            }
-        }*/
-    }
+ 
     
     /**
      * Nastavi datum do pripraveneho labelu
@@ -827,7 +976,7 @@ public class GJAProjectView extends FrameView
 
   @Action
   public void modelyClicked() {
-    TelemetryData data = Application.getInstance(GJAProjectApp.class).getTelemetry();
+    
     Config cfg=Application.getInstance(GJAProjectApp.class).getConfiguration();
 
     String wd = cfg.getModelPath();
@@ -848,9 +997,97 @@ public class GJAProjectView extends FrameView
     if (rc == JFileChooser.APPROVE_OPTION) {
       File file = fc.getSelectedFile();
       String filename = file.getAbsolutePath();
-      data.loadData(filename);
+      altComboBox.removeAllItems();
+      speedComboBox.removeAllItems();
+      playBtn.setEnabled(false);
+      stopBtn.setEnabled(false);
+      sliderDisable=true;
+      if(data.loadData(filename))
+      {
+        //Doslo k nahrani dat
+        timeSlider.setMaximum((int)Math.round(data.getMaxTimestamp()));
+        timeSlider.setMinimum(0);
+        timeSlider.setMajorTickSpacing(10);
+        timeSlider.setMinorTickSpacing(1);
+        timeSlider.setEnabled(true);
+        timeSlider.setValue(0);
+        playBtn.setEnabled(true);
+        time=0.0;
+        TreeSet<TelemetrySensor> data1 = data.getData();
+        for(TelemetrySensor s:data1)
+        {
+          for(TelemetryData.TelemetryVar v:s.getVariables())
+          {
+            altComboBox.addItem(v);
+            if(v.getUnit().equals("m"))
+              altComboBox.setSelectedItem(v);
+            
+            speedComboBox.addItem(v);
+            if(v.getUnit().equals("m/s"))
+              speedComboBox.setSelectedItem(v);
+            
+          }
+        }
+        updateDisplayData();
+      }
+      else
+      {
+        //Nemam zadna data
+        timeSlider.setMaximum(0);
+        timeSlider.setMinimum(0);
+        timeSlider.setMajorTickSpacing(10);
+        timeSlider.setMinorTickSpacing(1);
+        timeSlider.setEnabled(false);
+      }
+      sliderDisable=false;
     }
     return;
+  }
+  
+  /**
+   * Aktualizuje zobrazena data podle aktualni konfigurace
+   */
+  void updateDisplayData()
+  {
+    //Alt
+    TelemetryData.TelemetryVar var = (TelemetryData.TelemetryVar)altComboBox.getSelectedItem();
+    if(var!=null)
+    {
+      double val=var.getDoubleAt(time);
+      altPanel1.setNumber((int)Math.round(val));
+    }
+    //Speed
+    TelemetryData.TelemetryVar var2 = (TelemetryData.TelemetryVar)speedComboBox.getSelectedItem();
+    if(var2!=null)
+    {
+      double val=var2.getDoubleAt(time);
+      speedPanel1.setNumber((int)Math.round(val));
+      speedPanel1.changeSpeed(var2.getMax()<120.0);
+    }
+    mainPanel.revalidate();
+    this.mainPanel.repaint();
+  }
+
+  @Action
+  public void PlayClicked() 
+  {
+    playBtn.setEnabled(false);
+    if(!data.isEmpty())
+    {
+      stopBtn.setEnabled(true);
+      animationTimer.start();
+    }
+  }
+
+  @Action
+  public void stopClicked() 
+  {
+    stopBtn.setEnabled(false);
+    animationTimer.stop();
+    if(!data.isEmpty())
+    {
+      playBtn.setEnabled(true);
+    }
   }
 
   

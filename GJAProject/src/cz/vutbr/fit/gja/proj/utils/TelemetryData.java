@@ -32,6 +32,10 @@ public class TelemetryData {
   /** Typ dat - 37 bitu */
   public static final int T_DATA37 = 12;
 
+  public boolean isEmpty() {
+    return data.isEmpty();
+  }
+
   /** Info o pouzitem senzoru */
   public static class TelemetrySensor implements Comparable<TelemetrySensor>{
     long id;
@@ -46,11 +50,18 @@ public class TelemetryData {
       name=_name;
     }
 
-    void addVariable(TelemetryVar v)
+    public void addVariable(TelemetryVar v)
     {
       variables.add(new TelemetryVar(v));
     }
 
+    /*
+     * Vrati seznam vsech promennych
+     */
+    public TreeSet<TelemetryVar> getVariables()
+    {
+      return variables;
+    }
 
     /**
      * Ziska odkaz ze seznamu letovych hodnot
@@ -82,6 +93,8 @@ public class TelemetryData {
     String name;
     String unit;
     ArrayList<TelemetryItem> data ;
+    /**Maximalni a minimalni hodnoty */
+    double maxValue=0.0,minValue=0.0;
 
     TelemetryVar(int _param,String _name,String _unit)
     {
@@ -101,9 +114,87 @@ public class TelemetryData {
     {
       data.add(new TelemetryItem(i));
     }
+    public String getUnit()
+    {
+      return this.unit;
+    }
+    public double getMax()
+    {
+      return maxValue;
+    }
+    public double getMin()
+    {
+      return minValue;
+    }
+    
+    @Override
+    public String toString()
+    {
+      return name+" \t"+"["+unit+"]";
+    }
+    
+    /*
+     * Normalizuje cas, tak aby zacinal od nuly.Vyhleda max a min.
+     * Vraci maximalni dosazeny cas
+     */
+    public double normamlizeItems()
+    {
+      maxValue=0.0;
+      minValue=0.0;
+      double min=Double.POSITIVE_INFINITY;
+      double max=Double.NEGATIVE_INFINITY;
+      Collections.sort(data);
+      long timeOffset=0;
+      if(data.size()>0)
+      {
+        timeOffset=data.get(0).getTimestamp();
+        for(TelemetryItem row:data)
+        {
+          double val=row.getDouble();
+          min=Math.min(val, min);
+          max=Math.max(val, max);
+          row.setTimestamp(row.getTimestamp()-timeOffset);
+        }
+        maxValue=max;
+        minValue=min;
+        return data.get(data.size()-1).timestamp/1000.0;
+      }
+      return 0.0;
+    }
 
     public int compareTo(TelemetryVar o) {
       return this.param - o.param;
+    }
+
+    public double getDoubleAt(double time) {
+      time=time*1000;
+      if(data.size()==0)
+        return 0;
+      else if(time>=data.get(data.size()-1).timestamp)
+        return data.get(data.size()-1).getDouble();
+      else if(time<=0)
+        return data.get(0).getDouble();
+      else
+      {
+        //interpoluje mezi nejblizsimi casovymi znackami
+        for(int i=0;i<data.size()-1;i++)
+        {
+          TelemetryItem i1,i2;
+          i1=data.get(i);
+          i2=data.get(i+1);
+          if(i1.timestamp<=time && i2.timestamp>time)
+          {
+            if(i1.timestamp==i2.timestamp)
+              return i1.getDouble();
+            else
+            {
+              double interv=(time-i1.timestamp)/(i2.timestamp-i1.timestamp);
+              return i1.getDouble()+interv*(i2.getDouble()-i1.getDouble());
+            }
+          }
+        }
+        return 0;
+      }
     }
   }
 
@@ -134,7 +225,7 @@ public class TelemetryData {
       timestamp=i.timestamp;
     }
 
-    int getType(){
+    public int getType(){
       return dataType;
     }
 
@@ -142,7 +233,7 @@ public class TelemetryData {
      * Vrati udaj typu Double
      * @return
      */
-    double getDouble()
+    public double getDouble()
     {
       switch(dataType)
       {
@@ -159,7 +250,7 @@ public class TelemetryData {
     /**
      * Vrati udaj typu Int
      */
-    int getInt()
+    public int getInt()
     {
       return value;
     }
@@ -171,12 +262,25 @@ public class TelemetryData {
         return 0;
       else return -1;
     }
+
+    private long getTimestamp() {
+      return this.timestamp;
+    }
+
+    private void setTimestamp(long l) {
+      this.timestamp=l;
+    }
   }
 
   /**
    * Struktura s telemetrickymi udaji
    */
   private TreeSet<TelemetrySensor> data=new TreeSet<TelemetrySensor>();
+  
+  /**
+   * Maximalni casova znacka - celkovy pocet milisekund zaznamu
+   */
+  private double maxTimestamp=0.0;
 
 
 
@@ -200,33 +304,49 @@ public class TelemetryData {
     }
     return null;
   }
+  
+  public double getMaxTimestamp()
+  {
+    return maxTimestamp;
+  }
 
 
   /**
    * Nacte data ze souboru. Pozna, jestli se jedna o *.log nebo *.xml
    * @param file
    */
-  public void loadData(String file)
+  public boolean loadData(String file)
   {
+    maxTimestamp=0.0;
     int mid = file.lastIndexOf(".");
     String ext = file.substring(mid + 1, file.length());
-
     if(ext.equalsIgnoreCase("log"))
     {
       this.data.clear();
-      loadCSV(file);
+      if(!loadCSV(file))
+        return false;
     }
     else
     {
       JOptionPane.showMessageDialog(null, "Error: " + "Neznámá koncovka souboru", "Error", JOptionPane.ERROR_MESSAGE);
+      return false;
     }
 
+    //Nyni prepocita vsechny polozky a cas. udaje
+    for(TelemetrySensor s:data)
+    {
+      for(TelemetryVar d: s.variables)
+      {
+        maxTimestamp=Math.max(maxTimestamp, d.normamlizeItems());
+      }
+    }
+    return true;
   }
 
   /**
-   * Nahraje soubor CSV
+   * Nahraje soubor CSV. Vraci info o uspechu
    */
-  void loadCSV(String file) {
+  boolean loadCSV(String file) {
     int line=0;
     try {
       // Open the file that is the first
@@ -254,8 +374,11 @@ public class TelemetryData {
       }
       //Close the input stream
       in.close();
+      return true;
     } catch (Exception e) {//Catch exception if any
+      this.getData().clear();
       JOptionPane.showMessageDialog(null, "Chyba na řádku " + String.valueOf(line)+", " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+      return false;
     }
   }
 

@@ -66,25 +66,31 @@ public class AltPanel extends JPanel implements PanelInterface
   public void paintComponent(Graphics g)
   {
     Graphics2D g2d = (Graphics2D)g;
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    // Disable antialiasing for text
+    g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
     if (img1 != null) 
     {
       g2d.drawImage(img1, 0, 0, null);
       g2d.setFont(f);
       if(this.speednum < 10)
       {
-        this.speed = num.toString(speednum);    
+        this.speed = Integer.toString(speednum);    
         g2d.drawString(speed, 158, 107);        
       }
       else
       {
         if(this.speednum < 100)
         {
-          this.speed = num.toString(speednum);    
+          this.speed = Integer.toString(speednum);    
           g2d.drawString(speed, 145, 107);      
         }
         else
         {       
-          this.speed = num.toString(speednum);    
+          this.speed = Integer.toString(speednum);    
           g2d.drawString(speed, 132, 107);
         }
       }
