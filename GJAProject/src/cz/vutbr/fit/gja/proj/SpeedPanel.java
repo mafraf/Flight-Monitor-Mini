@@ -34,7 +34,7 @@ public class SpeedPanel extends JPanel implements PanelInterface
     }
   }
 
-   public void setNumber(int start)
+   public void setNumber(double start)
   {
     if(this.max == 120.0)
     {
@@ -57,7 +57,7 @@ public class SpeedPanel extends JPanel implements PanelInterface
   
   public void setData(TelemetryData.TelemetryItem item)
   {
-    this.setNumber((int)item.getDouble());
+    this.setNumber(item.getDouble());
   }
   
   public void changeSpeed(boolean slow)

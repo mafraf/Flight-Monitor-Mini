@@ -172,7 +172,7 @@ public class GJAProjectView extends FrameView
         });*/
 
         // nastaveni ikony hlavnimu oknu
-        ImageIcon i = resourceMap.getImageIcon("Application.icon");
+        ImageIcon i = resourceMap.getImageIcon("Application.icon"); //NOI18N
         if (i != null)
         {
             this.getFrame().setIconImage(i.getImage());
@@ -252,6 +252,8 @@ public class GJAProjectView extends FrameView
         speedPanel1 = new cz.vutbr.fit.gja.proj.SpeedPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         drawPanel1 = new cz.vutbr.fit.gja.proj.DrawPanel();
+        jComboBox2 = new javax.swing.JComboBox();
+        jComboBox3 = new javax.swing.JComboBox();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
@@ -336,13 +338,11 @@ public class GJAProjectView extends FrameView
         stopBtn.setAction(actionMap.get("stopClicked")); // NOI18N
         stopBtn.setIcon(resourceMap.getIcon("stopBtn.icon")); // NOI18N
         stopBtn.setText(resourceMap.getString("stopBtn.text")); // NOI18N
-        stopBtn.setEnabled(false);
         stopBtn.setName("stopBtn"); // NOI18N
 
         playBtn.setAction(actionMap.get("PlayClicked")); // NOI18N
         playBtn.setIcon(resourceMap.getIcon("playBtn.icon")); // NOI18N
         playBtn.setText(resourceMap.getString("playBtn.text")); // NOI18N
-        playBtn.setEnabled(false);
         playBtn.setName("playBtn"); // NOI18N
 
         animationSpinner.setModel(new SpinnerNumberModel(1.0, 0.0, 100.0, 0.1));
@@ -552,15 +552,31 @@ public class GJAProjectView extends FrameView
 
         drawPanel1.setName("drawPanel1"); // NOI18N
 
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.setName("jComboBox2"); // NOI18N
+
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox3.setName("jComboBox3"); // NOI18N
+
         javax.swing.GroupLayout drawPanel1Layout = new javax.swing.GroupLayout(drawPanel1);
         drawPanel1.setLayout(drawPanel1Layout);
         drawPanel1Layout.setHorizontalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 678, Short.MAX_VALUE)
+            .addGroup(drawPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(528, Short.MAX_VALUE))
         );
         drawPanel1Layout.setVerticalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 319, Short.MAX_VALUE)
+            .addGroup(drawPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(288, Short.MAX_VALUE))
         );
 
         jSplitPane1.setTopComponent(drawPanel1);
@@ -887,6 +903,8 @@ public class GJAProjectView extends FrameView
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1054,14 +1072,14 @@ public class GJAProjectView extends FrameView
     if(var!=null)
     {
       double val=var.getDoubleAt(time);
-      altPanel1.setNumber((int)Math.round(val));
+      altPanel1.setNumber(val);
     }
     //Speed
     TelemetryData.TelemetryVar var2 = (TelemetryData.TelemetryVar)speedComboBox.getSelectedItem();
     if(var2!=null)
     {
       double val=var2.getDoubleAt(time);
-      speedPanel1.setNumber((int)Math.round(val));
+      speedPanel1.setNumber(val);
       speedPanel1.changeSpeed(var2.getMax()<120.0);
     }
     mainPanel.revalidate();

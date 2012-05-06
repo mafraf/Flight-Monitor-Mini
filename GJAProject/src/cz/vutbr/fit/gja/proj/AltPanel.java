@@ -16,13 +16,13 @@ public class AltPanel extends JPanel implements PanelInterface
   private Font f = null;
   private String speed = null;
   private Integer num;
-  private int speednum;
+  private double speednum;
           
   public AltPanel()
   {
     super();
     this.f = new Font("Arial", Font.BOLD, 24);
-    this.speed = new String("125");
+    this.speed = "125";
     try
     {
       this.img1 = ImageIO.read(getClass().getResourceAsStream("resources/Alt.png"));
@@ -44,9 +44,8 @@ public class AltPanel extends JPanel implements PanelInterface
   {
       
   }
-  
    
-  public void setNumber(int start)
+  public void setNumber(double start)
   {
     this.speednum = start;
     double big = (double)this.speednum/100.0;
@@ -59,7 +58,7 @@ public class AltPanel extends JPanel implements PanelInterface
   
   public void setData(TelemetryData.TelemetryItem item)
   {
-    this.setNumber((int)item.getDouble());
+    this.setNumber(item.getDouble());
   }
   
   @Override
@@ -78,19 +77,19 @@ public class AltPanel extends JPanel implements PanelInterface
       g2d.setFont(f);
       if(this.speednum < 10)
       {
-        this.speed = Integer.toString(speednum);    
+        this.speed = Integer.toString((int)speednum);    
         g2d.drawString(speed, 158, 107);        
       }
       else
       {
         if(this.speednum < 100)
         {
-          this.speed = Integer.toString(speednum);    
+          this.speed = Integer.toString((int)speednum);    
           g2d.drawString(speed, 145, 107);      
         }
         else
         {       
-          this.speed = Integer.toString(speednum);    
+          this.speed = Integer.toString((int)speednum);    
           g2d.drawString(speed, 132, 107);
         }
       }
