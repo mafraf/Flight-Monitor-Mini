@@ -83,7 +83,7 @@ public class GJAProjectView extends FrameView
 
             public void actionPerformed(ActionEvent e)
             {
-                time+=50.0/1000.0 * (double)animationSpinner.getValue();
+                time+=50.0/1000.0 * ((SpinnerNumberModel)animationSpinner.getModel()).getNumber().doubleValue();
                 if(time>data.getMaxTimestamp())
                 {
                   animationTimer.stop();
@@ -1080,7 +1080,7 @@ public class GJAProjectView extends FrameView
     {
       double val=var2.getDoubleAt(time);
       speedPanel1.setNumber(val);
-      speedPanel1.changeSpeed(var2.getMax()<120.0);
+      speedPanel1.changeSpeed(var2.getMax());
     }
     mainPanel.revalidate();
     this.mainPanel.repaint();

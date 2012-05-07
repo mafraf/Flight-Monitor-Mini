@@ -36,22 +36,37 @@ public class SpeedPanel extends JPanel implements PanelInterface
 
    public void setNumber(double start)
   {
-    if(this.max == 120.0)
+    if(this.max == 72.0)
     {
-      if(start > 120)
-      {
-        start = 120;
-      }
-      this.rotation = (360.0/(max/(double)start));
+        if(start > 720)
+        {
+          start = 720;
+        }
+        this.rotation = (360.0/(max/(double)start)); 
     }
     else
     {
-      if(start > 260)
+      if(this.max == 120.0)
       {
-        start = 260;
+        if(start > 120)
+        {
+          start = 120;
+        }
+        this.rotation = (360.0/(max/(double)start));
       }
-      this.rotation = 360.0/(max/(double)(start)) - 28.0 + ((((double)start - 20.0)/60.0)*7.0);    
+      else
+      {
+        if(start > 260)
+        {
+          start = 260;
+        }
+        this.rotation = 360.0/(max/(double)(start)) - 28.0 + ((((double)start - 20.0)/60.0)*7.0);    
+      }
     }
+    if(this.rotation < 0.0)
+    {
+      this.rotation = 0.0;    
+    }    
     revalidate();   
   }
   
@@ -60,19 +75,27 @@ public class SpeedPanel extends JPanel implements PanelInterface
     this.setNumber(item.getDouble());
   }
   
-  public void changeSpeed(boolean slow)
+  public void changeSpeed(double max)
   {
     try
     {
-      if(slow && this.max>120.0)
+      if(max <= 72.0)
       {
-        img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed2.png"));  
-        this.max = 120.0;
+        img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed3.png"));  
+        this.max = 72.0;
       }
-      else if(!slow && this.max<260.0)
-      {
-        img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed.png")); 
-        this.max = 260.0;
+      else 
+      {  
+        if(max <= 120.0)
+        {
+          img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed2.png"));  
+          this.max = 120.0;
+        }
+        else
+        {
+          img1 = ImageIO.read(getClass().getResourceAsStream("resources/Speed.png")); 
+          this.max = 260.0;        
+        }
       }
       revalidate();
     }

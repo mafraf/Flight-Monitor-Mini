@@ -40,7 +40,7 @@ public class AltPanel extends JPanel implements PanelInterface
     }
   }
   
-  public void changeSpeed(boolean slow)
+  public void changeSpeed(double max)
   {
       
   }
