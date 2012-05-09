@@ -38,9 +38,9 @@ public class SpeedPanel extends JPanel implements PanelInterface
   {
     if(this.max == 72.0)
     {
-        if(start > 720)
+        if(start > 66)
         {
-          start = 720;
+          start = 66;
         }
         this.rotation = (360.0/(max/(double)start)); 
     }
@@ -48,17 +48,17 @@ public class SpeedPanel extends JPanel implements PanelInterface
     {
       if(this.max == 120.0)
       {
-        if(start > 120)
+        if(start > 110)
         {
-          start = 120;
+          start = 110;
         }
         this.rotation = (360.0/(max/(double)start));
       }
       else
       {
-        if(start > 260)
+        if(start > 240)
         {
-          start = 260;
+          start = 240;
         }
         this.rotation = 360.0/(max/(double)(start)) - 28.0 + ((((double)start - 20.0)/60.0)*7.0);    
       }
