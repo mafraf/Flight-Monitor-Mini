@@ -3,8 +3,8 @@
  */
 package cz.vutbr.fit.gja.proj;
 
-
 import cz.vutbr.fit.gja.proj.utils.*;
+import cz.vutbr.fit.gja.proj.layouts.*;
 import cz.vutbr.fit.gja.proj.utils.TelemetryData.TelemetrySensor;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -35,194 +35,176 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import org.jdesktop.application.Application;
 
-
-
 /**
  * The application's main frame.
  *
  */
-public class GJAProjectView extends FrameView
-{
-    /**Datovy objekt s rezervacemi*/
-    
-    /**Priznak aktivni komponenty*/
-    private int activeComponent=0;
-    private static final int COMPONENT_RESERVE=1;
-    private static final int COMPONENT_SPECIES=2;
-    private static final int COMPONENT_POI=4;
+public class GJAProjectView extends FrameView {
 
-    /**Odkaz na vyhledavaci formular*/
-    //private SearchForm searchForm;
-    /**Ukazatel na casovy slider*/
-    private int timeIndex=1;
-    private double time=0.0;
-   
+  /**Datovy objekt s rezervacemi*/
+  /**Priznak aktivni komponenty*/
+  private int activeComponent = 0;
+  private static final int COMPONENT_RESERVE = 1;
+  private static final int COMPONENT_SPECIES = 2;
+  private static final int COMPONENT_POI = 4;
+  /**Odkaz na vyhledavaci formular*/
+  //private SearchForm searchForm;
+  /**Ukazatel na casovy slider*/
+  private int timeIndex = 1;
+  private double time = 0.0;
+  private TelemetryData data;
+  private Timer animationTimer;
+  /** Priznak zablokovani zmeny stavu timeSlideru **/
+  private boolean sliderDisable = false;
 
-    
-    
-    private TelemetryData data;
-    private Timer animationTimer;
-    /** Priznak zablokovani zmeny stavu timeSlideru **/
-    private boolean sliderDisable=false;
-    
-    
+  /**
+   * Konstruktor vytvori potrebne objekty a navaze je na udalosti
+   * @param app
+   */
+  public GJAProjectView(SingleFrameApplication app) {
+    super(app);
 
+    initComponents();
+    data = Application.getInstance(GJAProjectApp.class).getTelemetry();
+    animationTimer = new Timer(50, new ActionListener() {
 
-    /**
-     * Konstruktor vytvori potrebne objekty a navaze je na udalosti
-     * @param app
-     */
-    public GJAProjectView(SingleFrameApplication app)
-    {
-        super(app);
+      public void actionPerformed(ActionEvent e) {
+        time += 50.0 / 1000.0 * ((SpinnerNumberModel) animationSpinner.getModel()).getNumber().doubleValue();
+        if (time > data.getMaxTimestamp()) {
+          animationTimer.stop();
+          stopBtn.setEnabled(false);
+          playBtn.setEnabled(true);
+        } else {
+          //Aktualizuje polozky
+          sliderDisable = true;
+          timeSlider.setValue((int) time);
+          sliderDisable = false;
+          updateDisplayData();
+        }
+      }
+    });
+    animationTimer.setRepeats(true);
 
-        initComponents();
-        data = Application.getInstance(GJAProjectApp.class).getTelemetry();
-        animationTimer=new Timer(50,new ActionListener()
-        {
+    // status bar initialization - message timeout, idle icon and busy animation, etc
+    ResourceMap resourceMap = getResourceMap();
+    int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
+    messageTimer = new Timer(messageTimeout, new ActionListener() {
 
-            public void actionPerformed(ActionEvent e)
-            {
-                time+=50.0/1000.0 * ((SpinnerNumberModel)animationSpinner.getModel()).getNumber().doubleValue();
-                if(time>data.getMaxTimestamp())
-                {
-                  animationTimer.stop();
-                  stopBtn.setEnabled(false);
-                  playBtn.setEnabled(true);
-                }
-                else
-                {
-                  //Aktualizuje polozky
-                  sliderDisable=true;
-                  timeSlider.setValue((int)time);
-                  sliderDisable=false;
-                  updateDisplayData();
-                }
-            }
-        });
-        animationTimer.setRepeats(true);
-
-        // status bar initialization - message timeout, idle icon and busy animation, etc
-        ResourceMap resourceMap = getResourceMap();
-        int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
-        messageTimer = new Timer(messageTimeout, new ActionListener()
-        {
-
-            public void actionPerformed(ActionEvent e)
-            {
-                statusMessageLabel.setText("");
-            }
-        });
-        messageTimer.setRepeats(false);
-        //int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
+      public void actionPerformed(ActionEvent e) {
+        statusMessageLabel.setText("");
+      }
+    });
+    messageTimer.setRepeats(false);
+    varScroll.getVerticalScrollBar().setUnitIncrement(16);
+    actScroll.getVerticalScrollBar().setUnitIncrement(16);
+    actPanel.setLayout(new WrapLayout(WrapLayout.LEFT));
+    jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
+    //int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
 /*        for (int i = 0; i < busyIcons.length; i++)
-        {
-            busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
-        }
-        busyIconTimer = new Timer(busyAnimationRate, new ActionListener()
-        {
-
-            public void actionPerformed(ActionEvent e)
-            {
-                busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
-                statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
-            }
-        });*/
-        //idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
-        //statusAnimationLabel.setIcon(idleIcon);
-        progressBar.setVisible(false);
-
-        // connecting action tasks to status bar via TaskMonitor
-       /* TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
-        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-        {
-
-            public void propertyChange(java.beans.PropertyChangeEvent evt)
-            {
-                String propertyName = evt.getPropertyName();
-                if ("started".equals(propertyName))
-                {
-                    if (!busyIconTimer.isRunning())
-                    {
-                        statusAnimationLabel.setIcon(busyIcons[0]);
-                        busyIconIndex = 0;
-                        busyIconTimer.start();
-                    }
-                    progressBar.setVisible(true);
-                    progressBar.setIndeterminate(true);
-                } else if ("done".equals(propertyName))
-                {
-                    busyIconTimer.stop();
-                    statusAnimationLabel.setIcon(idleIcon);
-                    progressBar.setVisible(false);
-                    progressBar.setValue(0);
-                } else if ("message".equals(propertyName))
-                {
-                    String text = (String) (evt.getNewValue());
-                    statusMessageLabel.setText((text == null) ? "" : text);
-                    messageTimer.restart();
-                } else if ("progress".equals(propertyName))
-                {
-                    int value = (Integer) (evt.getNewValue());
-                    progressBar.setVisible(true);
-                    progressBar.setIndeterminate(false);
-                    progressBar.setValue(value);
-                }
-            }
-        });*/
-
-        // nastaveni ikony hlavnimu oknu
-        ImageIcon i = resourceMap.getImageIcon("Application.icon"); //NOI18N
-        if (i != null)
-        {
-            this.getFrame().setIconImage(i.getImage());
-        }
-        //Minimalni velikost okna
-        this.getFrame().setMinimumSize(new Dimension(650, 400));
-
-        //Zmena popisku statuspanelu podle udalosti v DrawPanelu
-        this.drawPanel1.addStatusListener(new StatusEvent());
-
-
-        this.getFrame().pack();
-
-        Config cfg=Application.getInstance(GJAProjectApp.class).getConfiguration();
-        drawPanel1.setMapType(cfg.getMapType());
-        jComboBox1.setSelectedIndex(cfg.getMapType().equals(BingMapsStat.TYPE_Aerial) ? 0 : 1);
-
-        
-        
-        /*this.searchForm = new SearchForm(this.getFrame());
-        if (i != null)
-        {
-            this.searchForm.setIconImage(i.getImage());
-        }*/
-
-
-
-    }
-
-    /**
-     * Okno O aplikaci
-     */
-    @Action
-    public void showAboutBox()
     {
-        if (aboutBox == null)
-        {
-            JFrame mainFrame = GJAProjectApp.getApplication().getMainFrame();
-            aboutBox = new GJAProjectAboutBox(mainFrame);
-            aboutBox.setLocationRelativeTo(mainFrame);
-        }
-        GJAProjectApp.getApplication().show(aboutBox);
+    busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
     }
+    busyIconTimer = new Timer(busyAnimationRate, new ActionListener()
+    {
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+    public void actionPerformed(ActionEvent e)
+    {
+    busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
+    statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
+    }
+    });*/
+    //idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
+    //statusAnimationLabel.setIcon(idleIcon);
+    progressBar.setVisible(false);
+
+    // connecting action tasks to status bar via TaskMonitor
+       /* TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
+    taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+    {
+
+    public void propertyChange(java.beans.PropertyChangeEvent evt)
+    {
+    String propertyName = evt.getPropertyName();
+    if ("started".equals(propertyName))
+    {
+    if (!busyIconTimer.isRunning())
+    {
+    statusAnimationLabel.setIcon(busyIcons[0]);
+    busyIconIndex = 0;
+    busyIconTimer.start();
+    }
+    progressBar.setVisible(true);
+    progressBar.setIndeterminate(true);
+    } else if ("done".equals(propertyName))
+    {
+    busyIconTimer.stop();
+    statusAnimationLabel.setIcon(idleIcon);
+    progressBar.setVisible(false);
+    progressBar.setValue(0);
+    } else if ("message".equals(propertyName))
+    {
+    String text = (String) (evt.getNewValue());
+    statusMessageLabel.setText((text == null) ? "" : text);
+    messageTimer.restart();
+    } else if ("progress".equals(propertyName))
+    {
+    int value = (Integer) (evt.getNewValue());
+    progressBar.setVisible(true);
+    progressBar.setIndeterminate(false);
+    progressBar.setValue(value);
+    }
+    }
+    });*/
+
+    // nastaveni ikony hlavnimu oknu
+    ImageIcon i = resourceMap.getImageIcon("Application.icon"); //NOI18N
+    if (i != null) {
+      this.getFrame().setIconImage(i.getImage());
+    }
+    //Minimalni velikost okna
+    this.getFrame().setMinimumSize(new Dimension(650, 400));
+
+    //Zmena popisku statuspanelu podle udalosti v DrawPanelu
+    this.drawPanel1.addStatusListener(new StatusEvent());
+
+
+    this.getFrame().pack();
+
+    Config cfg = Application.getInstance(GJAProjectApp.class).getConfiguration();
+    drawPanel1.setMapType(cfg.getMapType());
+    jComboBox1.setSelectedIndex(cfg.getMapType().equals(BingMapsStat.TYPE_Aerial) ? 0 : 1);
+
+
+
+    /*this.searchForm = new SearchForm(this.getFrame());
+    if (i != null)
+    {
+    this.searchForm.setIconImage(i.getImage());
+    }*/
+
+
+
+  }
+
+  /**
+   * Okno O aplikaci
+   */
+  @Action
+  public void showAboutBox() {
+    if (aboutBox == null) {
+      JFrame mainFrame = GJAProjectApp.getApplication().getMainFrame();
+      aboutBox = new GJAProjectAboutBox(mainFrame);
+      aboutBox.setLocationRelativeTo(mainFrame);
+    }
+    GJAProjectApp.getApplication().show(aboutBox);
+  }
+
+  /** This method is called from within the constructor to
+   * initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is
+   * always regenerated by the Form Editor.
+   */
+  @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -256,12 +238,17 @@ public class GJAProjectView extends FrameView
         jComboBox3 = new javax.swing.JComboBox();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        varScroll = new javax.swing.JScrollPane();
+        varPanel = new javax.swing.JPanel();
+        actScroll = new javax.swing.JScrollPane();
+        actPanel = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem1 = new javax.swing.JMenuItem();
         settingMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
@@ -425,6 +412,7 @@ public class GJAProjectView extends FrameView
 
         jPanel2.setName("jPanel2"); // NOI18N
 
+        altComboBox.setAction(actionMap.get("updatePanels")); // NOI18N
         altComboBox.setName("comboAltDataType"); // NOI18N
 
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
@@ -474,6 +462,7 @@ public class GJAProjectView extends FrameView
         jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
 
+        speedComboBox.setAction(actionMap.get("updatePanels")); // NOI18N
         speedComboBox.setName("comboSpeedDataType"); // NOI18N
 
         speedPanel1.setName("speedPanel1"); // NOI18N
@@ -522,7 +511,7 @@ public class GJAProjectView extends FrameView
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, 0, 265, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -531,7 +520,7 @@ public class GJAProjectView extends FrameView
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel5);
@@ -544,9 +533,10 @@ public class GJAProjectView extends FrameView
         );
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
         );
 
+        jSplitPane1.setDividerLocation(mainPanel.getHeight()-200);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setName("jSplitPane1"); // NOI18N
 
@@ -567,7 +557,7 @@ public class GJAProjectView extends FrameView
                 .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(528, Short.MAX_VALUE))
+                .addContainerGap(343, Short.MAX_VALUE))
         );
         drawPanel1Layout.setVerticalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -576,7 +566,7 @@ public class GJAProjectView extends FrameView
                 .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(288, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jSplitPane1.setTopComponent(drawPanel1);
@@ -585,20 +575,62 @@ public class GJAProjectView extends FrameView
 
         jPanel4.setName("jPanel4"); // NOI18N
 
+        jSplitPane2.setDividerLocation(150);
+        jSplitPane2.setName("jSplitPane2"); // NOI18N
+
+        varScroll.setName("varScroll"); // NOI18N
+
+        varPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        varPanel.setName("varPanel"); // NOI18N
+        varPanel.setLayout(new javax.swing.BoxLayout(varPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        varScroll.setViewportView(varPanel);
+
+        jSplitPane2.setLeftComponent(varScroll);
+
+        actScroll.setInheritsPopupMenu(true);
+        actScroll.setName("actScroll"); // NOI18N
+        actScroll.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                actScrollComponentResized(evt);
+            }
+        });
+
+        actPanel.setName("actPanel"); // NOI18N
+        actPanel.setLayout(null);
+        actScroll.setViewportView(actPanel);
+
+        jSplitPane2.setRightComponent(actScroll);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 673, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 320, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
+        jPanel6.setName("jPanel6"); // NOI18N
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 488, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 298, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("jPanel6.TabConstraints.tabTitle"), jPanel6); // NOI18N
+
         jSplitPane1.setRightComponent(jTabbedPane1);
+        jTabbedPane1.getAccessibleContext().setAccessibleName(resourceMap.getString("jTabbedPane1.AccessibleContext.accessibleName")); // NOI18N
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -607,7 +639,7 @@ public class GJAProjectView extends FrameView
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
@@ -616,8 +648,8 @@ public class GJAProjectView extends FrameView
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)))
+                    .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -625,13 +657,8 @@ public class GJAProjectView extends FrameView
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        jSeparator2.setName("jSeparator2"); // NOI18N
-        fileMenu.add(jSeparator2);
-
-        jSeparator1.setName("jSeparator1"); // NOI18N
-        fileMenu.add(jSeparator1);
-
         jMenuItem1.setAction(actionMap.get("modelyClicked")); // NOI18N
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setLabel(resourceMap.getString("jMenuItem1.label")); // NOI18N
         jMenuItem1.setName("jMenuItem1"); // NOI18N
         fileMenu.add(jMenuItem1);
@@ -641,6 +668,9 @@ public class GJAProjectView extends FrameView
         settingMenuItem.setText(resourceMap.getString("settingMenuItem.text")); // NOI18N
         settingMenuItem.setName("settingMenuItem"); // NOI18N
         fileMenu.add(settingMenuItem);
+
+        jSeparator1.setName("jSeparator1"); // NOI18N
+        fileMenu.add(jSeparator1);
 
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setText(resourceMap.getString("exitMenuItem.text")); // NOI18N
@@ -706,33 +736,32 @@ public class GJAProjectView extends FrameView
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Kliknuti na tlacitko Vlozit novou chranenou oblast
-     * @param evt
-     */
-    /**
-     * Reakce na zmenu temporalniho ukazatele
-     * @param evt
-     */
+  /**
+   * Kliknuti na tlacitko Vlozit novou chranenou oblast
+   * @param evt
+   */
+  /**
+   * Reakce na zmenu temporalniho ukazatele
+   * @param evt
+   */
     private void timeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_timeSliderStateChanged
 
-      if(!sliderDisable)
-      {
-        time=(int)timeSlider.getValue();
+      if (!sliderDisable) {
+        time = (int) timeSlider.getValue();
         updateDisplayData();
       }
     }//GEN-LAST:event_timeSliderStateChanged
 
-    /** 
-     * Zmena typu mapy
-     */
+  /**
+   * Zmena typu mapy
+   */
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-      String str=jComboBox1.getSelectedIndex()==0 ? BingMapsStat.TYPE_Aerial : BingMapsStat.TYPE_ROAD;
+      String str = jComboBox1.getSelectedIndex() == 0 ? BingMapsStat.TYPE_Aerial : BingMapsStat.TYPE_ROAD;
       drawPanel1.setMapType(str);
-      try{
-      Config cfg=Application.getInstance(GJAProjectApp.class).getConfiguration();
-      cfg.setMapType(str);
-      cfg.saveConfig(Config.defaultConfigFile);
+      try {
+        Config cfg = Application.getInstance(GJAProjectApp.class).getConfiguration();
+        cfg.setMapType(str);
+        cfg.saveConfig(Config.defaultConfigFile);
       } catch (Exception e) {
         JOptionPane.showMessageDialog(null, e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
       }
@@ -740,161 +769,171 @@ public class GJAProjectView extends FrameView
 
     private void timeSliderPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_timeSliderPropertyChange
       // TODO add your handling code here:
-      
-      
     }//GEN-LAST:event_timeSliderPropertyChange
 
-    /**
-     * Testovaci akce - vymazani vsech mapovych podkladu
-     */
-    @Action
-    public void Btn1click()
-    {
+    private void actScrollComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_actScrollComponentResized
 
-        this.drawPanel1.removeMaps();
+   int iWid = this.actScroll.getViewportBorderBounds().width;
+   int iHei = this.actScroll.getViewportBorderBounds().height;
 
+   //this.actPanel.setPreferredSize(new Dimension(iWid, -1));
+   //this.actScroll.revalidate();
+
+   // Compute the height needed to accomodate all pictures.
+   /*try {
+     int iCompCount = this.jpnlGallery.getComponentCount();
+     if( 0 == iCompCount )
+       iHei = this.jscrGallery.getViewportBorderBounds().height;
+     else {
+       FlowLayout layout = (FlowLayout)this.jpnlGallery.getLayout();
+       int iImageWid = this.jpnlGallery.getComponent(0).getWidth()  + layout.getHgap();
+       int iImageHei = this.jpnlGallery.getComponent(0).getHeight() + layout.getVgap();
+       int iImagesHoriz = (iWid - layout.getHgap()) / iImageWid;
+       int iImagesVert  = iCompCount / iImagesHoriz +  (iCompCount % iImagesHoriz == 0 ? 0 : 1);
+       iHei = iImageHei * iImagesVert + layout.getVgap();
+     }
+   } catch( Exception e ) {
+     e.printStackTrace();
+     iHei = 1000;
+   }
+
+   // Set the size.
+   this.jpnlGallery.setPreferredSize(new Dimension(iWid, iHei));
+   this.jscrGallery.revalidate();
+ */
+    }//GEN-LAST:event_actScrollComponentResized
+
+  /**
+   * Testovaci akce - vymazani vsech mapovych podkladu
+   */
+  @Action
+  public void Btn1click() {
+
+    this.drawPanel1.removeMaps();
+
+  }
+
+  /**
+   * Zobrazeni formulare pro vyhledavani
+   */
+  @Action
+  public void btnSearchClick() {
+    //searchForm.showSearch();
+  }
+
+  /**
+   * Prepnuti na zalozku Novy druh
+   */
+  /**
+   * Zpracovani zmen statusu DrawPanelu
+   */
+  protected class StatusEvent implements InfoEvent {
+
+    public void infoUpdated(String status, int code) {
+      printStatus(status, code);
+    }
+  }
+
+  /**
+   * Zpracovani zmen statusu datovych panelu
+   */
+  protected class DataChangedEvent implements InfoEvent {
+    //Flag =true - bude se palit udalost
+
+    private boolean flag = false;
+
+    public DataChangedEvent(boolean flag) {
+      this.flag = flag;
     }
 
-    /**
-     * Zobrazeni formulare pro vyhledavani
-     */
-    @Action
-    public void btnSearchClick()
-    {
-        //searchForm.showSearch();
+    public void infoUpdated(String status, int code) {
+      /*printStatus(status, code);
+      drawPanel1.clear();
+      setReservations();
+      setLines();
+      setSpeciesView(null);
+      setTimeView();
+      if(Globals.species!=null)
+      {
+      editMenuItem.setEnabled(true);
+      deleteMenuItem.setEnabled(true);
+      timeSlider.setEnabled(true);
+      }
+      else
+      {
+      timeSlider.setEnabled(false);
+      editMenuItem.setEnabled(false);
+      deleteMenuItem.setEnabled(false);
+      }
+      if(flag)
+      {
+      //Zavolano z prvku Component
+      Globals.fireSpeciesChangedEvent("", InfoEvent.CODE_INFO);
+      }
+      else
+      {
+      //Zavolano zmetody fireSpecieseee...
+
+      }*/
     }
+  }
 
-    /**
-     * Prepnuti na zalozku Novy druh
-     */
-    
-
-    
-    /**
-     * Zpracovani zmen statusu DrawPanelu
-     */
-    protected class StatusEvent implements InfoEvent
-    {
-        public void infoUpdated(String status, int code)
-        {
-            printStatus(status, code);
-        }
+  /**
+   * Vypise status do spodni listy
+   * @param status Status
+   * @param code Kod statusu (Info, Chyba, Dokonceno
+   */
+  protected void printStatus(String status, int code) {
+    Color c;
+    if (code == InfoEvent.CODE_ERROR) {
+      c = new Color(0xff0000);
+    } else if (code == InfoEvent.CODE_DRAWING_FINISHED) {
+      c = new Color(0x8888ff);
+    } else {
+      c = new Color(0x000000);
     }
+    statusMessageLabel.setForeground(c);
+    statusMessageLabel.setText(status);
+  }
 
-    /**
-     * Zpracovani zmen statusu datovych panelu
-     */
-    protected class DataChangedEvent implements InfoEvent
-    {
-        //Flag =true - bude se palit udalost
-        private boolean flag=false;
-        public DataChangedEvent(boolean flag)
-        {
-            this.flag=flag;
-        }
-        public void infoUpdated(String status, int code)
-        {
-           /*printStatus(status, code);
-           drawPanel1.clear();
-           setReservations();
-           setLines();
-           setSpeciesView(null);
-           setTimeView();
-           if(Globals.species!=null)
-           {
-               editMenuItem.setEnabled(true);
-               deleteMenuItem.setEnabled(true);
-               timeSlider.setEnabled(true);
-           }
-           else
-           {
-               timeSlider.setEnabled(false);
-               editMenuItem.setEnabled(false);
-               deleteMenuItem.setEnabled(false);
-           }
-           if(flag)
-           {
-               //Zavolano z prvku Component
-               Globals.fireSpeciesChangedEvent("", InfoEvent.CODE_INFO);
-           }
-           else
-           {
-               //Zavolano zmetody fireSpecieseee...
-               
-           }*/
-        }
-    }
+  /**
+   * Otevreni noveho formulare s nastavenim
+   */
+  @Action
+  public void settingClicked() {
+    JFrame mainFrame = GJAProjectApp.getApplication().getMainFrame();
+    JDialog configForm = new ConfigForm(mainFrame);
+    configForm.setLocationRelativeTo(mainFrame);
+    configForm.setVisible(true);
+  }
 
-    /**
-     * Vypise status do spodni listy
-     * @param status Status
-     * @param code Kod statusu (Info, Chyba, Dokonceno
-     */
-    protected void printStatus(String status, int code)
-    {
-            Color c;
-            if(code==InfoEvent.CODE_ERROR)
-            {
-                c=new Color(0xff0000);
-            }
-            else if(code==InfoEvent.CODE_DRAWING_FINISHED)
-            {
-                c=new Color(0x8888ff);
-            }else
-            {
-                c=new Color(0x000000);
-            }
-            statusMessageLabel.setForeground(c);
-            statusMessageLabel.setText(status);
-    }
+  /**
+   * Zazoomovani drawPanelu
+   */
+  @Action
+  public void btnZoomIn() {
+    drawPanel1.zoomIn(drawPanel1.getWidth() / 2, drawPanel1.getHeight() / 2);
 
+  }
 
+  /**
+   * Odzoomovani drawPanelu
+   */
+  @Action
+  public void btnZoomOut() {
+    drawPanel1.zoomOut(drawPanel1.getWidth() / 2, drawPanel1.getHeight() / 2);
+  }
 
-    /**
-     * Otevreni noveho formulare s nastavenim
-     */
-    @Action
-    public void settingClicked()
-    {
-        JFrame mainFrame = GJAProjectApp.getApplication().getMainFrame();
-        JDialog configForm = new ConfigForm(mainFrame);
-        configForm.setLocationRelativeTo(mainFrame);
-        configForm.setVisible(true);
-    }
-
-    /**
-     * Zazoomovani drawPanelu
-     */
-    @Action
-    public void btnZoomIn() {
-        drawPanel1.zoomIn(drawPanel1.getWidth()/2, drawPanel1.getHeight()/2);
-        
-    }
-
-    /**
-     * Odzoomovani drawPanelu
-     */
-    @Action
-    public void btnZoomOut() {
-        drawPanel1.zoomOut(drawPanel1.getWidth()/2, drawPanel1.getHeight()/2);
-    }
-
-    
-
-    /**
-     * Nic
-     */
-    @Action
-    public void reservationsShowClicked()
-    {
-        
-        //if(this.showResMenuItem.)
-    }
-
-
-
-
+  /**
+   * Nic
+   */
+  @Action
+  public void reservationsShowClicked() {
+    //if(this.showResMenuItem.)
+  }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel actPanel;
+    private javax.swing.JScrollPane actScroll;
     private javax.swing.JComboBox altComboBox;
     private cz.vutbr.fit.gja.proj.AltPanel altPanel1;
     private javax.swing.JSpinner animationSpinner;
@@ -916,10 +955,11 @@ public class GJAProjectView extends FrameView
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel mainPanel;
@@ -935,67 +975,56 @@ public class GJAProjectView extends FrameView
     private javax.swing.JButton stopBtn;
     private javax.swing.JLabel timeLabel;
     private javax.swing.JSlider timeSlider;
+    private javax.swing.JPanel varPanel;
+    private javax.swing.JScrollPane varScroll;
     // End of variables declaration//GEN-END:variables
-    private final Timer messageTimer;
+  private final Timer messageTimer;
 //    private final Timer busyIconTimer;
 //    private final Icon idleIcon;
 //    private final Icon[] busyIcons = new Icon[15];
 //    private int busyIconIndex = 0;
-    private JDialog aboutBox;
+  private JDialog aboutBox;
 
+  /**
+   * Nastavi datum do pripraveneho labelu
+   * @param date Datum, ktere se ma zobrazit
+   */
+  public void setDate(Date date, Date dateTo) {
+    //if(date==null)
+    //    date=new Date();
+    //String dateOut;
+    //DateFormat dateFormatter;
+    SimpleDateFormat formatter = new SimpleDateFormat("d. M. yyyy",
+            Locale.getDefault());
+    if (date != null) {
 
-  
-
-   
-
-
-
- 
-    
-    /**
-     * Nastavi datum do pripraveneho labelu
-     * @param date Datum, ktere se ma zobrazit
-     */
-    public void setDate(Date date, Date dateTo)
-    {
-        //if(date==null)
-        //    date=new Date();
-        //String dateOut;
-        //DateFormat dateFormatter;
-      SimpleDateFormat formatter = new SimpleDateFormat("d. M. yyyy",
-				 Locale.getDefault());
-      if (date != null) {
-
-        if (dateTo == null)
-          dateTo = new Date();
-
-        timeLabel.setText(formatter.format(date) + " - " + formatter.format(dateTo));
+      if (dateTo == null) {
+        dateTo = new Date();
       }
-      else
-        timeLabel.setText("");
+
+      timeLabel.setText(formatter.format(date) + " - " + formatter.format(dateTo));
+    } else {
+      timeLabel.setText("");
     }
+  }
 
-    
-
-
-    /**
-     * Zobrazeni napovedy.
-     */
-    @Action
-    public void showHelpClickeed()
-    {
-        JFrame mainFrame = GJAProjectApp.getApplication().getMainFrame();
-        HelpForm jd=new HelpForm(mainFrame);
-        //JDialog jd = new JDialog(jf);
-        //jd.setModal(true);
-        //jd.setLocationRelativeTo(mainFrame);
-        //jd.setVisible(true);
-    }
+  /**
+   * Zobrazeni napovedy.
+   */
+  @Action
+  public void showHelpClickeed() {
+    JFrame mainFrame = GJAProjectApp.getApplication().getMainFrame();
+    HelpForm jd = new HelpForm(mainFrame);
+    //JDialog jd = new JDialog(jf);
+    //jd.setModal(true);
+    //jd.setLocationRelativeTo(mainFrame);
+    //jd.setVisible(true);
+  }
 
   @Action
   public void modelyClicked() {
-    
-    Config cfg=Application.getInstance(GJAProjectApp.class).getConfiguration();
+
+    Config cfg = Application.getInstance(GJAProjectApp.class).getConfiguration();
 
     String wd = cfg.getModelPath();
     JFileChooser fc = new JFileChooser(wd);
@@ -1015,98 +1044,179 @@ public class GJAProjectView extends FrameView
     if (rc == JFileChooser.APPROVE_OPTION) {
       File file = fc.getSelectedFile();
       String filename = file.getAbsolutePath();
-      altComboBox.removeAllItems();
-      speedComboBox.removeAllItems();
-      playBtn.setEnabled(false);
-      stopBtn.setEnabled(false);
-      sliderDisable=true;
-      if(data.loadData(filename))
-      {
-        //Doslo k nahrani dat
-        timeSlider.setMaximum((int)Math.round(data.getMaxTimestamp()));
-        timeSlider.setMinimum(0);
-        timeSlider.setMajorTickSpacing(10);
-        timeSlider.setMinorTickSpacing(1);
-        timeSlider.setEnabled(true);
-        timeSlider.setValue(0);
-        playBtn.setEnabled(true);
-        time=0.0;
-        TreeSet<TelemetrySensor> data1 = data.getData();
-        for(TelemetrySensor s:data1)
-        {
-          for(TelemetryData.TelemetryVar v:s.getVariables())
-          {
-            altComboBox.addItem(v);
-            if(v.getUnit().equals("m"))
-              altComboBox.setSelectedItem(v);
-            
-            speedComboBox.addItem(v);
-            if(v.getUnit().equals("m/s"))
-              speedComboBox.setSelectedItem(v);
-            
-          }
-        }
+      
+      sliderDisable = true;
+      if (data.loadData(filename)) {
+        //Data se nahrala
+        initDisplayVars();
         updateDisplayData();
-      }
-      else
-      {
+      } else {
         //Nemam zadna data
-        timeSlider.setMaximum(0);
-        timeSlider.setMinimum(0);
-        timeSlider.setMajorTickSpacing(10);
-        timeSlider.setMinorTickSpacing(1);
-        timeSlider.setEnabled(false);
+        deInitDisplayVars();
       }
-      sliderDisable=false;
+      sliderDisable = false;
     }
     return;
   }
-  
+
+  /**
+   * Inicializuje zobrazena data
+   */
+  void initDisplayVars()
+  {
+    //Doslo k nahrani dat
+    altComboBox.removeAllItems();
+    speedComboBox.removeAllItems();
+    playBtn.setEnabled(false);
+    stopBtn.setEnabled(false);
+    varPanel.removeAll();
+    actPanel.removeAll();
+
+    timeSlider.setMaximum((int) Math.round(data.getMaxTimestamp()));
+    timeSlider.setMinimum(0);
+    timeSlider.setMajorTickSpacing(10);
+    timeSlider.setMinorTickSpacing(1);
+    timeSlider.setEnabled(true);
+    timeSlider.setValue(0);
+    playBtn.setEnabled(true);
+    time = 0.0;
+    TreeSet<TelemetrySensor> data1 = data.getData();
+    for (TelemetrySensor s : data1) {
+      for (TelemetryData.TelemetryVar v : s.getVariables()) {
+        altComboBox.addItem(v);
+        if (v.getUnit().equals("m")) {
+          altComboBox.setSelectedItem(v);
+        }
+
+        speedComboBox.addItem(v);
+        if (v.getUnit().equals("m/s")) {
+          speedComboBox.setSelectedItem(v);
+        }
+
+      }
+    }
+
+    //Projde znovu pro zobrazeni akt. dat ve spodnim sloupci
+    for (TelemetrySensor s : data1) {
+      //Prida zobrazenou komponentu
+      JLabel lbl=new JLabel(s.getName());
+      lbl.setFont(lbl.getFont().deriveFont(lbl.getFont().getStyle() ^ Font.BOLD));
+      varPanel.add(lbl);
+      for (TelemetryData.TelemetryVar v : s.getVariables())
+      {
+        JCheckBox check=new JCheckBox(v.getName(), true);
+        //Vytvorim novy panel s aktualnimi daty
+        ActValPanel act=new ActValPanel();
+        act.setLimits(v.getMin(), v.getMax(),v.getDecimals(),v.getUnit());
+        actPanel.add(act);
+
+        check.addActionListener(new CheckClickListener(act));
+        varPanel.add(check);
+
+        
+      }
+    }
+  }
+
+  /**
+   * Odinicializuje zobrazena data
+   */
+  void deInitDisplayVars() {
+    altComboBox.removeAllItems();
+    speedComboBox.removeAllItems();
+    playBtn.setEnabled(false);
+    stopBtn.setEnabled(false);
+
+    timeSlider.setMaximum(0);
+    timeSlider.setMinimum(0);
+    timeSlider.setMajorTickSpacing(10);
+    timeSlider.setMinorTickSpacing(1);
+    timeSlider.setEnabled(false);
+    varPanel.removeAll();
+    actPanel.removeAll();
+  }
+
   /**
    * Aktualizuje zobrazena data podle aktualni konfigurace
    */
-  void updateDisplayData()
-  {
+  void updateDisplayData() {
     //Alt
-    TelemetryData.TelemetryVar var = (TelemetryData.TelemetryVar)altComboBox.getSelectedItem();
-    if(var!=null)
-    {
-      double val=var.getDoubleAt(time);
+    TelemetryData.TelemetryVar var = (TelemetryData.TelemetryVar) altComboBox.getSelectedItem();
+    if (var != null) {
+      double val = var.getDoubleAt(time);
       altPanel1.setNumber(val);
     }
     //Speed
-    TelemetryData.TelemetryVar var2 = (TelemetryData.TelemetryVar)speedComboBox.getSelectedItem();
-    if(var2!=null)
-    {
-      double val=var2.getDoubleAt(time);
+    TelemetryData.TelemetryVar var2 = (TelemetryData.TelemetryVar) speedComboBox.getSelectedItem();
+    if (var2 != null) {
+      double val = var2.getDoubleAt(time);
       speedPanel1.setNumber(val);
       speedPanel1.changeSpeed(var2.getMax());
     }
+
+    //Projde znovu pro zobrazeni akt. dat ve spodnim sloupci
+    int i=0;
+    for (TelemetrySensor s : data.getData()) {
+      for (TelemetryData.TelemetryVar v : s.getVariables())
+      {
+        if(actPanel.getComponentCount()<=i)
+          break;
+        //Vytvorim novy panel s aktualnimi daty
+        ActValPanel act=(ActValPanel)actPanel.getComponent(i);
+        act.setValue(v.getDoubleAt(time),v.getDecimals(), v.getUnit(), v.getName());
+        i++;
+
+      }
+    }
+
+
     mainPanel.revalidate();
     this.mainPanel.repaint();
   }
 
   @Action
-  public void PlayClicked() 
-  {
+  public void PlayClicked() {
     playBtn.setEnabled(false);
-    if(!data.isEmpty())
-    {
+    if (!data.isEmpty()) {
       stopBtn.setEnabled(true);
       animationTimer.start();
     }
   }
 
   @Action
-  public void stopClicked() 
-  {
+  public void stopClicked() {
     stopBtn.setEnabled(false);
     animationTimer.stop();
-    if(!data.isEmpty())
-    {
+    if (!data.isEmpty()) {
       playBtn.setEnabled(true);
     }
   }
 
-  
+  @Action
+  public void updatePanels() {
+    updateDisplayData();
+  }
+
+
+  class CheckClickListener implements ActionListener
+  {
+    //Odkaz na prideleny panel
+    private ActValPanel panel;
+
+    public CheckClickListener(ActValPanel p)
+    {
+      this.panel=p;
+
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      JCheckBox c = (JCheckBox)e.getSource();
+      //Prenastavi a znovu vytvori vsechny komponenty
+      if(c.isSelected())
+        panel.setVisible(true);
+      else
+        panel.setVisible(false);
+      //actPanel.removeAll();
+    }
+  }
 }

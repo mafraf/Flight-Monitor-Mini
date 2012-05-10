@@ -99,9 +99,10 @@ public class SpeedPanel extends JPanel implements PanelInterface
       }
       revalidate();
     }
-    catch(IOException ex)
+    catch(Exception _)
     {
       System.out.println("Image not load");
+      img1=null;
     }
   }
   
