@@ -48,6 +48,10 @@ public class AltPanel extends JPanel implements PanelInterface
   public void setNumber(double start)
   {
     this.speednum = start;
+    if(this.speednum < 0)
+    {
+      this.speednum = 0;
+    }
     double big = (double)this.speednum/100.0;
     double small = this.speednum - ((int)big)*100; 
     this.rotation2 = 360.0/(10.0/big);
