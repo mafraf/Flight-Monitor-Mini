@@ -175,6 +175,14 @@ public class TelemetryData {
       else
         return 0;
     }
+    
+    public int getType()
+    {
+      if(data.size()>0)
+        return data.get(0).getType();
+      else
+        return 0;
+    }
 
     public double getDoubleAt(double time) {
       time = time * 1000;
@@ -201,6 +209,68 @@ public class TelemetryData {
         }
         return 0;
       }
+    }
+    
+    public double getDoubleCourseAt(double time) {
+      time = time * 1000;
+      if (data.size() == 0) {
+        return 0;
+      } else if (time >= data.get(data.size() - 1).timestamp) {
+        return data.get(data.size() - 1).getDouble();
+      } else if (time <= 0) {
+        return data.get(0).getDouble();
+      } else {
+        //interpoluje mezi nejblizsimi casovymi znackami
+        for (int i = 0; i < data.size() - 1; i++) {
+          TelemetryItem i1, i2;
+          i1 = data.get(i);
+          i2 = data.get(i + 1);
+          if (i1.timestamp <= time && i2.timestamp > time) {
+            if (i1.timestamp == i2.timestamp) {
+              return i1.getDouble();
+            } else {
+              double interv = (time - i1.timestamp) / (i2.timestamp - i1.timestamp);
+              double d1=i1.getDouble();
+              double d2=i2.getDouble();
+              if(Math.abs(d2-d1)>180)
+              {
+                return d1 + interv * (d2-d1 + (d2>d1 ? -360 : 360) ); 
+              }
+              else
+               return d1 + interv * (d2-d1);
+            }
+          }
+        }
+        return 0;
+      }
+    }
+    
+    
+    
+    public double getIntAt(double time) {
+      time = time * 1000;
+      if (data.size() == 0) {
+        return 0;
+      } else if (time >= data.get(data.size() - 1).timestamp) {
+        return data.get(data.size() - 1).getInt();
+      } else if (time <= 0) {
+        return data.get(0).getInt();
+      } else {
+        //interpoluje mezi nejblizsimi casovymi znackami
+        for (int i = 0; i < data.size() ; i++) {
+          TelemetryItem i1;
+          i1 = data.get(i);
+          if (i1.timestamp >= time) {
+              return i1.getInt();
+          }
+        }
+        return 0;
+      }
+    }
+
+
+    public ArrayList<TelemetryItem> getItems() {
+      return this.data;
     }
   }
 
@@ -242,6 +312,11 @@ public class TelemetryData {
         case T_DATA32:
         case T_DATA37:
           return value * Math.pow(10, -decimals);
+        case T_GPS:
+          double minute = (value & 0xFFFF)/1000.0;
+	        double stupne = (value >> 16) & 0xFF;
+          stupne=stupne + minute/60.0;
+          return stupne * (((decimals>>1) & 1)==1 ? -1 : 1);
         default:
           return 0.0;
       }

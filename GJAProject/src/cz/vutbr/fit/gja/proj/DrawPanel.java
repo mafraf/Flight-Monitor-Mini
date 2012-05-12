@@ -86,6 +86,11 @@ public class DrawPanel extends JPanel implements Runnable
     protected Image mediaImage=null;
 
     protected String mapType=BingMapsStat.TYPE_Aerial;
+    
+    /** Veci pro zobrazeni ikony letadla */
+    protected GPSPoint iconPoint=null;
+    protected double iconHeading=0;
+    private Image iconImage = null;
 
     /***************************************************************************
      * Editace jednoho polygonu
@@ -190,6 +195,8 @@ public class DrawPanel extends JPanel implements Runnable
 
             //Prenastaveni koordinatu na horni levy pixel stredniho obrazku
             GPSPoint p=BingMapsProjection.adjustCoords(geo, -MAP_WIDTH, -MAP_HEIGHT, zoom);
+            this.iconImage = ImageIO.read(getClass().getResourceAsStream("resources/model_aero_small.png"));
+     
 
 
             T=new Timer(200,new ActionListener(){
@@ -425,6 +432,7 @@ public class DrawPanel extends JPanel implements Runnable
     {
 
         objects.clear();
+        iconPoint=null;
         resetPoints();
 
     }
@@ -740,6 +748,22 @@ public class DrawPanel extends JPanel implements Runnable
             g.drawRoundRect(lastPoint.x+DIAMETER,lastPoint.y+DIAMETER, 400, 300, 5, 5);
             g.drawImage(mediaImage, lastPoint.x+DIAMETER, lastPoint.y+DIAMETER,400,300,new Color(0xffffff), content);
         }
+        
+        /* Vytvori obrazek ikony letadla */
+        if(this.iconPoint!=null)
+        {
+          Point pg=BingMapsProjection.getCoords(geo, iconPoint,this.getControlPoint(),zoom);
+          if(iconImage==null)
+            g.drawOval(pg.x - DIAMETER/2  , pg.y - DIAMETER/2, DIAMETER, DIAMETER);
+          else
+          {
+            g.rotate(Math.toRadians(iconHeading), pg.x, pg.y);
+            g.drawImage(iconImage, pg.x-20,pg.y-14 ,null);
+          }
+        }
+        
+        
+        
         //statsPanel.revalidate();
         //statsPanel.repaint();
         //if(controlPoint!=null)
@@ -788,7 +812,13 @@ public class DrawPanel extends JPanel implements Runnable
         this.minPoints=minimum;
         this.maxPoints=maximum;
     }
-
+    
+    /** Nastavi ikonu letadla */
+    public void setIconPoint(GPSPoint p,double heading)
+    {
+      this.iconPoint=p;
+      this.iconHeading=heading;
+    }
     /**
      * Vrati pole editovanych bodu
      * @return Vysledne pole GPS souradnic
@@ -1638,7 +1668,7 @@ public class DrawPanel extends JPanel implements Runnable
             if(e.getKeyChar()==KeyEvent.VK_ENTER)
             {
 
-                if(canClose())
+                if(editEnable && canClose())
                 {
                     //Ulozeni kolekce bodu do seznamu polygonu
                     if(editEnable)

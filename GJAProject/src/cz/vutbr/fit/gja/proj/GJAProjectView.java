@@ -56,6 +56,8 @@ public class GJAProjectView extends FrameView {
   private Timer animationTimer;
   /** Priznak zablokovani zmeny stavu timeSlideru **/
   private boolean sliderDisable = false;
+  
+  private TelemetryData.TelemetryVar latitude=null,longitude=null,kurs=null,kvalit=null;
 
   /**
    * Konstruktor vytvori potrebne objekty a navaze je na udalosti
@@ -234,8 +236,6 @@ public class GJAProjectView extends FrameView {
         speedPanel1 = new cz.vutbr.fit.gja.proj.SpeedPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         drawPanel1 = new cz.vutbr.fit.gja.proj.DrawPanel();
-        jComboBox2 = new javax.swing.JComboBox();
-        jComboBox3 = new javax.swing.JComboBox();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
@@ -511,7 +511,7 @@ public class GJAProjectView extends FrameView {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, 0, 265, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -520,7 +520,7 @@ public class GJAProjectView extends FrameView {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel5);
@@ -533,7 +533,7 @@ public class GJAProjectView extends FrameView {
         );
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
         );
 
         jSplitPane1.setDividerLocation(mainPanel.getHeight()-200);
@@ -542,31 +542,15 @@ public class GJAProjectView extends FrameView {
 
         drawPanel1.setName("drawPanel1"); // NOI18N
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox2.setName("jComboBox2"); // NOI18N
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox3.setName("jComboBox3"); // NOI18N
-
         javax.swing.GroupLayout drawPanel1Layout = new javax.swing.GroupLayout(drawPanel1);
         drawPanel1.setLayout(drawPanel1Layout);
         drawPanel1Layout.setHorizontalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(drawPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(343, Short.MAX_VALUE))
+            .addGap(0, 678, Short.MAX_VALUE)
         );
         drawPanel1Layout.setVerticalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(drawPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 42, Short.MAX_VALUE)
         );
 
         jSplitPane1.setTopComponent(drawPanel1);
@@ -605,11 +589,11 @@ public class GJAProjectView extends FrameView {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
@@ -620,11 +604,11 @@ public class GJAProjectView extends FrameView {
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 488, Short.MAX_VALUE)
+            .addGap(0, 673, Short.MAX_VALUE)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 298, Short.MAX_VALUE)
+            .addGap(0, 597, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel6.TabConstraints.tabTitle"), jPanel6); // NOI18N
@@ -639,7 +623,7 @@ public class GJAProjectView extends FrameView {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE))
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
@@ -648,8 +632,8 @@ public class GJAProjectView extends FrameView {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)))
+                    .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -658,7 +642,6 @@ public class GJAProjectView extends FrameView {
         fileMenu.setName("fileMenu"); // NOI18N
 
         jMenuItem1.setAction(actionMap.get("modelyClicked")); // NOI18N
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setLabel(resourceMap.getString("jMenuItem1.label")); // NOI18N
         jMenuItem1.setName("jMenuItem1"); // NOI18N
         fileMenu.add(jMenuItem1);
@@ -942,8 +925,6 @@ public class GJAProjectView extends FrameView {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1071,6 +1052,10 @@ public class GJAProjectView extends FrameView {
     stopBtn.setEnabled(false);
     varPanel.removeAll();
     actPanel.removeAll();
+    drawPanel1.clear();
+    drawPanel1.setType(DrawPanel.TYPE_LINES);
+    drawPanel1.setColor(Globals.COLOR_RESERVE);
+    latitude=null;longitude=null;kurs=null;
 
     timeSlider.setMaximum((int) Math.round(data.getMaxTimestamp()));
     timeSlider.setMinimum(0);
@@ -1081,18 +1066,47 @@ public class GJAProjectView extends FrameView {
     playBtn.setEnabled(true);
     time = 0.0;
     TreeSet<TelemetrySensor> data1 = data.getData();
-    for (TelemetrySensor s : data1) {
-      for (TelemetryData.TelemetryVar v : s.getVariables()) {
-        altComboBox.addItem(v);
-        if (v.getUnit().equals("m")) {
-          altComboBox.setSelectedItem(v);
-        }
+    boolean isgps=false;
+    
+    if(!isgps)
+    {
+      for (TelemetrySensor s : data1) {
+        int index=0;
+        boolean actualgps=false;
+        for (TelemetryData.TelemetryVar v : s.getVariables()) {
+          if(v.getType()==(TelemetryData.T_GPS) && (v.getDecimals() & 1)==0)
+          {
+            isgps=true;
+            actualgps=true;
+            latitude=v;
+          }
+          if(v.getType()==(TelemetryData.T_GPS) && (v.getDecimals()&1)==1)
+          {
+            isgps=true;
+            actualgps=true;
+            longitude=v;
+          }
+          if(actualgps && v.getUnit().equals("°") && index==9)
+          {
+            kurs=v;
+          }
+          if(index==3 && actualgps)
+          {
+            kvalit=v;
+          }
+          
+          altComboBox.addItem(v);
+          if ((v.getUnit().equals("m") && !isgps)|| (isgps && index==8 && v.getUnit().equals("m"))) {
+            altComboBox.setSelectedItem(v);
+          }
 
-        speedComboBox.addItem(v);
-        if (v.getUnit().equals("m/s")) {
-          speedComboBox.setSelectedItem(v);
-        }
+          speedComboBox.addItem(v);
+          if (v.getUnit().equals("m/s") && !isgps || (isgps && index==7 && v.getUnit().equals("m/s"))) {
+            speedComboBox.setSelectedItem(v);
+          }
 
+          index++;
+        }
       }
     }
 
@@ -1107,7 +1121,7 @@ public class GJAProjectView extends FrameView {
         JCheckBox check=new JCheckBox(v.getName(), true);
         //Vytvorim novy panel s aktualnimi daty
         ActValPanel act=new ActValPanel();
-        act.setLimits(v.getMin(), v.getMax(),v.getDecimals(),v.getUnit());
+        act.setLimits(v.getMin(), v.getMax(),v.getType()==TelemetryData.T_GPS ? 4 : v.getDecimals(),v.getUnit());
         actPanel.add(act);
 
         check.addActionListener(new CheckClickListener(act));
@@ -1115,6 +1129,31 @@ public class GJAProjectView extends FrameView {
 
         
       }
+    }
+    //Inicializuje GPS
+    if(latitude!=null && longitude!=null && kvalit!=null)
+    {
+      
+      ArrayList<GPSPoint> points=new ArrayList<GPSPoint>();
+      ArrayList<TelemetryData.TelemetryItem> lat = latitude.getItems();
+      ArrayList<TelemetryData.TelemetryItem> lon = longitude.getItems();
+      ArrayList<TelemetryData.TelemetryItem> kval = kvalit.getItems();
+      
+      for(int i=0;i<lat.size() && i<lon.size() && i<kval.size();i++)
+      {
+        TelemetryData.TelemetryItem latItem=lat.get(i);
+        TelemetryData.TelemetryItem lonItem=lon.get(i);
+        TelemetryData.TelemetryItem kvItem=kval.get(i);
+        if(kvItem.getInt()!=0)
+        {
+          GPSPoint p=new GPSPoint(latItem.getDouble(), lonItem.getDouble());
+          points.add(p);
+        }
+      }
+      //Vlozim souradnice do drawpanelu
+      drawPanel1.addPolygon(points);
+      if(points.size()>0)
+        drawPanel1.setCenter(points.get(0));
     }
   }
 
@@ -1126,7 +1165,9 @@ public class GJAProjectView extends FrameView {
     speedComboBox.removeAllItems();
     playBtn.setEnabled(false);
     stopBtn.setEnabled(false);
-
+    drawPanel1.clear();
+    latitude=null;longitude=null;kurs=null;
+    
     timeSlider.setMaximum(0);
     timeSlider.setMinimum(0);
     timeSlider.setMajorTickSpacing(10);
@@ -1153,6 +1194,20 @@ public class GJAProjectView extends FrameView {
       speedPanel1.setNumber(val);
       speedPanel1.changeSpeed(var2.getMax());
     }
+    
+    //GPS
+    if(this.latitude!=null && longitude!=null && kurs!=null &&kvalit!=null)
+    {
+      if(kvalit.getDoubleAt(time)>=1.0)
+      {
+        double lat=latitude.getDoubleAt(time);
+        double lon=longitude.getDoubleAt(time);
+        double course=kurs.getDoubleCourseAt(time);
+        GPSPoint p=new GPSPoint(lat, lon);
+        drawPanel1.setIconPoint(p, course);
+      }
+                
+    }
 
     //Projde znovu pro zobrazeni akt. dat ve spodnim sloupci
     int i=0;
@@ -1163,7 +1218,7 @@ public class GJAProjectView extends FrameView {
           break;
         //Vytvorim novy panel s aktualnimi daty
         ActValPanel act=(ActValPanel)actPanel.getComponent(i);
-        act.setValue(v.getDoubleAt(time),v.getDecimals(), v.getUnit(), v.getName());
+        act.setValue(v.getDoubleAt(time),v.getType()==TelemetryData.T_GPS ? 4 : v.getDecimals(), v.getUnit(), v.getName());
         i++;
 
       }

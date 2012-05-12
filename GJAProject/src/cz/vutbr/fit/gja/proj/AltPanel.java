@@ -34,7 +34,7 @@ public class AltPanel extends JPanel implements PanelInterface
       this.setPreferredSize(d);
       this.setNumber(128);  //Pak volat s 0 !!!!!
     }
-    catch(IOException ex)
+    catch(Exception ex)
     {
       System.out.println("Image not load");
     }
