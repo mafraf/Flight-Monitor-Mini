@@ -75,6 +75,11 @@ public class SpeedPanel extends JPanel implements PanelInterface
   
   }
    
+  public void acTime(double time)
+  {
+  
+  }
+  
   public void setData(TelemetryData.TelemetryItem item)
   {
     this.setNumber(item.getDouble());

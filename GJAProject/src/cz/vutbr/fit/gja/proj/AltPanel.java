@@ -49,6 +49,11 @@ public class AltPanel extends JPanel implements PanelInterface
   {
   
   }
+
+  public void acTime(double time)
+  {
+  
+  }
   
   public void setNumber(double start)
   {

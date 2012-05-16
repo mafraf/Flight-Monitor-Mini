@@ -1271,6 +1271,9 @@ public class GJAProjectView extends FrameView {
       speedPanel1.changeSpeed(var2.getMax());
     }
 
+    //Graf
+    graphingData1.acTime(time);
+    
     //GPS
     if(this.latitude!=null && longitude!=null && kurs!=null &&kvalit!=null)
     {
