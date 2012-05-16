@@ -6,4 +6,5 @@ public interface PanelInterface
 {
   public void setData(TelemetryData.TelemetryItem item);
   public void changeSpeed(double max);  
+  public void setAllData(TelemetryData.TelemetryVar data, int max);
 }
