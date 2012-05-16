@@ -26,7 +26,7 @@ public class SpeedPanel extends JPanel implements PanelInterface
       this.setMinimumSize(d);
       this.setMaximumSize(d);
       this.setPreferredSize(d);
-      this.setNumber(65);
+      this.setNumber(0);
     }
     catch(IOException ex)
     {
@@ -70,6 +70,11 @@ public class SpeedPanel extends JPanel implements PanelInterface
     revalidate();   
   }
   
+  public void setAllData(TelemetryData.TelemetryVar data, int max)
+  {
+  
+  }
+   
   public void setData(TelemetryData.TelemetryItem item)
   {
     this.setNumber(item.getDouble());

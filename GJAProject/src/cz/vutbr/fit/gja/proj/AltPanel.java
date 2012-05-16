@@ -32,7 +32,7 @@ public class AltPanel extends JPanel implements PanelInterface
       this.setMinimumSize(d);
       this.setMaximumSize(d);
       this.setPreferredSize(d);
-      this.setNumber(128);  //Pak volat s 0 !!!!!
+      this.setNumber(0);
     }
     catch(Exception ex)
     {
@@ -44,7 +44,12 @@ public class AltPanel extends JPanel implements PanelInterface
   {
       
   }
-   
+
+  public void setAllData(TelemetryData.TelemetryVar data, int max)
+  {
+  
+  }
+  
   public void setNumber(double start)
   {
     this.speednum = start;
