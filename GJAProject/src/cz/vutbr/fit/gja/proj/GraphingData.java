@@ -60,8 +60,7 @@ public class GraphingData extends JPanel implements PanelInterface
     {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int w = getWidth();
         int h = getHeight(); 
         g2.draw(new Line2D.Double(PAD, PAD, PAD, h-PAD));
@@ -110,7 +109,8 @@ public class GraphingData extends JPanel implements PanelInterface
         {
           g2.setPaint(Color.blue);
           g2.setStroke(dashed); 
-          g2.draw(new Line2D.Double(position+PAD, PAD - PAD/4, position+PAD, h - PAD/4));
+          double pos = xInc*position;
+          g2.draw(new Line2D.Double(pos+PAD, PAD - PAD/4,pos+PAD, h - PAD/4));
         }     
     }
  
