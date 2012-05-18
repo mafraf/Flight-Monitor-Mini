@@ -1,3 +1,7 @@
+/**
+ * @author Ondrej Vagner
+ */
+
 package cz.vutbr.fit.gja.proj;
 
 import javax.swing.*;

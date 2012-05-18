@@ -84,7 +84,7 @@ jEditorPane.setBackground(new Color(245,245,245));
                 j.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // display the frame
-                j.setSize(new Dimension(750,700));
+                j.setSize(new Dimension(780,700));
 
                 // pack it, if you prefer
                 //j.pack();
