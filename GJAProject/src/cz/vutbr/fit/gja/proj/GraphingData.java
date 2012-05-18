@@ -7,15 +7,25 @@ import java.awt.*;
 import java.util.*; 
 import cz.vutbr.fit.gja.proj.utils.*;
  
+/**
+ * @class GraphingData
+ * @brief Trida pro vykresleni a obsluhu panelu grafu
+ */
 public class GraphingData extends JPanel implements PanelInterface
 {
+    /**
+     * Pole dat 
+     */
     ArrayList<Integer> gdata;
     final int PAD = 20;
     final int down = 80;
     double position = 0.0;
     final static float dash1[] = {10.0f};
     final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
-    
+ 
+    /**
+     * Konstruktor tridy
+     */   
     public GraphingData()
     {
       super();   
@@ -25,17 +35,33 @@ public class GraphingData extends JPanel implements PanelInterface
       this.setMaximumSize(d);
       this.setPreferredSize(d);
     }
+
     
+   /**
+    * Metoda rozhrani pro nastaveni aktualni hodnoty
+    * @param item aktualni hodnota
+    */       
     public void setData(TelemetryData.TelemetryItem item)
     {
     
     }
+
     
+   /**
+    * Metoda rozhrani pro nastaveni zobrazovaneho ukazatele (budiku)
+    * @param max maximalni zobrazovana hodnota 
+    */        
     public void changeSpeed(double max)
     {
     
     }
+  
     
+   /**
+    * Metoda rozhrani pro nahrani vsech dat 
+    * @param data strukura obsahujici data
+    * @param max pocet zaznamu 
+    */      
     public void setAllData(TelemetryData.TelemetryVar data, int max)
     { 
       if(data != null)
@@ -48,13 +74,22 @@ public class GraphingData extends JPanel implements PanelInterface
         revalidate();
       }
     }
+
     
+   /**
+    * Metoda rozhrani pro nastaveni aktualniho casu 
+    * @param time aktualni cas
+    */     
     public void acTime(double time)
     {
       position = time;
       revalidate();  
     } 
-    
+ 
+    /**
+     * Metoda pro prekresleni panelu
+     * @param g trida grafickeho kontextu
+     */   
     @Override
     public void paintComponent(Graphics g) 
     {
@@ -114,15 +149,19 @@ public class GraphingData extends JPanel implements PanelInterface
         }     
     }
  
-    private int getMax() {
-        int max = -Integer.MAX_VALUE;
-        for(int i = 0; i < gdata.size(); i++) 
+    /**
+     * Metoda pro nalezeni maxima v poli dat
+     */       
+    private int getMax()
+    {
+      int max = -Integer.MAX_VALUE;
+      for(int i = 0; i < gdata.size(); i++) 
         {
-            if((gdata.get(i)) > max)
-            {
-                max = (gdata.get(i));
-            }
-        }
-        return max;
+          if((gdata.get(i)) > max)
+          {
+              max = (gdata.get(i));
+          }
+      }
+      return max;
     }
 }

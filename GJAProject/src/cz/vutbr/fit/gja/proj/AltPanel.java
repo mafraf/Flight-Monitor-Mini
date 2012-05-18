@@ -2,10 +2,13 @@ package cz.vutbr.fit.gja.proj;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
 import javax.imageio.*;
 import cz.vutbr.fit.gja.proj.utils.*;
 
+/**
+ * @class AltPanel
+ * @brief Trida pro vykresleni a obsluhu panelu vyskomeru
+ */
 public class AltPanel extends JPanel implements PanelInterface
 {
   private Image img1 = null;
@@ -17,7 +20,10 @@ public class AltPanel extends JPanel implements PanelInterface
   private String speed = null;
   private Integer num;
   private double speednum;
-          
+
+ /**
+  * Konstruktor tridy
+  */
   public AltPanel()
   {
     super();
@@ -39,22 +45,42 @@ public class AltPanel extends JPanel implements PanelInterface
       System.out.println("Image not load");
     }
   }
+ 
   
+ /**
+  * Metoda rozhrani pro nastaveni zobrazovaneho ukazatele (budiku)
+  * @param max maximalni zobrazovana hodnota 
+  */      
   public void changeSpeed(double max)
   {
       
   }
 
+  
+ /**
+  * Metoda rozhrani pro nahrani vsech dat 
+  * @param data strukura obsahujici data
+  * @param max pocet zaznamu 
+  */    
   public void setAllData(TelemetryData.TelemetryVar data, int max)
   {
   
   }
 
+  
+ /**
+  * Metoda rozhrani pro nastaveni aktualniho casu 
+  * @param time aktualni cas
+  */   
   public void acTime(double time)
   {
   
   }
-  
+
+ /**
+  * Metoda pro nastaveni natoceni obou rucicek
+  * @param start vsupni hodnota
+  */  
   public void setNumber(double start)
   {
     this.speednum = start;
@@ -69,12 +95,21 @@ public class AltPanel extends JPanel implements PanelInterface
     revalidate();   
   }
   
-  
+
+ /**
+  * Metoda rozhrani pro nastaveni aktualni hodnoty
+  * @param item aktualni hodnota
+  */   
   public void setData(TelemetryData.TelemetryItem item)
   {
     this.setNumber(item.getDouble());
   }
+
   
+ /**
+  * Metoda pro prekresleni panelu
+  * @param g trida grafickeho kontextu
+  */     
   @Override
   public void paintComponent(Graphics g)
   {

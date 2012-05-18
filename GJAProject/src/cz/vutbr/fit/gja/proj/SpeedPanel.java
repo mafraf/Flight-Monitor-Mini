@@ -4,17 +4,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import javax.imageio.*;
-import java.awt.image.*;
-import java.awt.geom.AffineTransform;
 import cz.vutbr.fit.gja.proj.utils.*;
 
+/**
+ * @class SpeedPanel
+ * @brief Trida pro vykresleni a obsluhu panelu rychlomeru
+ */
 public class SpeedPanel extends JPanel implements PanelInterface
 {
   private Image img1 = null;
   private Image img2 = null;
   private double rotation = 0.0;
   private double max = 120.0;
-          
+
+  
+ /**
+  * Konstruktor tridy
+  */
   public SpeedPanel()
   {
     super();
@@ -34,8 +40,14 @@ public class SpeedPanel extends JPanel implements PanelInterface
     }
   }
 
-   public void setNumber(double start)
+  
+ /**
+  * Metoda pro nastaveni nove hodnoty na ukazateli
+  * @param start nova hodnota
+  */  
+  public void setNumber(double start)
   {
+    start = Math.abs(start);
     if(this.max == 72.0)
     {
         if(start > 66)
@@ -69,22 +81,43 @@ public class SpeedPanel extends JPanel implements PanelInterface
     }    
     revalidate();   
   }
+
   
+ /**
+  * Metoda rozhrani pro nahrani vsech dat 
+  * @param data strukura obsahujici data
+  * @param max pocet zaznamu 
+  */  
   public void setAllData(TelemetryData.TelemetryVar data, int max)
   {
   
   }
-   
+
+  
+ /**
+  * Metoda rozhrani pro nastaveni aktualniho casu 
+  * @param time aktualni cas
+  */ 
   public void acTime(double time)
   {
   
   }
+
   
+ /**
+  * Metoda rozhrani pro nastaveni aktualni hodnoty
+  * @param item aktualni hodnota
+  */   
   public void setData(TelemetryData.TelemetryItem item)
   {
     this.setNumber(item.getDouble());
   }
   
+  
+ /**
+  * Metoda rozhrani pro nastaveni zobrazovaneho ukazatele (budiku)
+  * @param max maximalni zobrazovana hodnota 
+  */    
   public void changeSpeed(double max)
   {
     try
@@ -116,6 +149,11 @@ public class SpeedPanel extends JPanel implements PanelInterface
     }
   }
   
+  
+ /**
+  * Metoda pro prekresleni panelu
+  * @param g trida grafickeho kontextu
+  */    
   @Override
   public void paintComponent(Graphics g)
   {
