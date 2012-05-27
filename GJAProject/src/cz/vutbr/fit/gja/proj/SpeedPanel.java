@@ -1,7 +1,3 @@
-/**
- * @author Ondrej Vagner
- */
-
 package cz.vutbr.fit.gja.proj;
 
 import javax.swing.*;
@@ -11,8 +7,8 @@ import javax.imageio.*;
 import cz.vutbr.fit.gja.proj.utils.*;
 
 /**
- * @class SpeedPanel
- * @brief Trida pro vykresleni a obsluhu panelu rychlomeru
+ * Trida pro vykresleni a obsluhu panelu rychlomeru
+ * @author Ondrej Vagner
  */
 public class SpeedPanel extends JPanel implements PanelInterface
 {

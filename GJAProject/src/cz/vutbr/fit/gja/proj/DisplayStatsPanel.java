@@ -27,7 +27,7 @@ import org.jdesktop.application.Application;
 /**
  * Panel s vyhledavanim druhu, podle pozice kliknuti na mape
  *
- * @author Pavel Dziadzio
+ * @author Martin Falticko
  */
 public class DisplayStatsPanel extends javax.swing.JPanel {
 
@@ -89,47 +89,7 @@ public class DisplayStatsPanel extends javax.swing.JPanel {
      * Nacteni dat z databaze s zobrazeni v gridu
      */
     private void loadData() {
-      /*DefaultTableModel model = (DefaultTableModel)tResultTable.getModel();
-
-      model.setRowCount(0);
-
-      spec = new Species(Application.getInstance(PDBProjectApp.class).getConnection());
-
-      spec.searchByPoint(this.point, this.selDate, this.radius);
-
-      while (spec.next()) {
-        BufferedImage img = null;
-
-        if (spec.getPhotos().loadPrimaryImage()) {
-          try {
-            BufferedImage origimg = ImageIO.read(spec.getPhotos().imageProxy.getDataInStream());
-
-
-            double ration;
-            if (origimg.getWidth() > origimg.getHeight()) {
-              ration = origimg.getWidth()/(double)48;
-            }
-            else {
-              ration = origimg.getHeight()/(double)48;
-            }
-
-            int w = (int) (origimg.getWidth() / ration);
-            int h = (int) (origimg.getHeight() / ration);
-
-            img = new BufferedImage(w, h, BufferedImage.TYPE_USHORT_555_RGB);
-
-            img.getGraphics().drawImage(origimg, 0, 0, w, h, null);
-
-          } catch (SQLException ex) {
-            Logger.getLogger(SearchForm.class.getName()).log(Level.SEVERE, null, ex);
-          }
-          catch (IOException ex) {
-            Logger.getLogger(SearchForm.class.getName()).log(Level.SEVERE, null, ex);
-          }
-        }
-
-        model.addRow(new Object[] {img, spec.name, spec.lname});
-      }*/
+     
     }
 
 
@@ -298,16 +258,8 @@ public class DisplayStatsPanel extends javax.swing.JPanel {
      * Doubleclick na gridu - zobrazeni druhu na mape
      */
     private void tResultTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tResultTableMouseClicked
-     /* if (evt.getClickCount() == 2) {
-        int srow = tResultTable.getSelectedRow() + 1;
 
-        if ((srow > 0) && spec.rowByIndex(srow)) {
-          spec.getAreas().selectAtTime();
-          spec.getAreas().next();
-          Globals.species=spec;
-          Globals.fireSpeciesChangedEvent("", InfoEvent.CODE_INFO);
-        }
-      }*/
+
     }//GEN-LAST:event_tResultTableMouseClicked
 
     /**

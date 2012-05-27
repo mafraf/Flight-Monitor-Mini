@@ -80,7 +80,7 @@ public class Config implements Serializable {
 
   /**
    * Vraci cestu k modelu
-   * @return
+   * @return cesta k modelu
    */
   public String getModelPath() {
     return modelPath;
@@ -88,7 +88,7 @@ public class Config implements Serializable {
 
   /**
    * Nastavi cestu modelu
-   * @param login
+   * @param login jmeno souboru
    */
   public void setModelPath(String pth) {
     this.modelPath=pth;
@@ -96,7 +96,7 @@ public class Config implements Serializable {
 
    /**
    * Vraci typ mapy
-   * @return
+   * @return typ mapy
    */
   public String getMapType() {
     return mapType;
@@ -104,7 +104,7 @@ public class Config implements Serializable {
 
   /**
    * Nastavi typ mapy
-   * @param login
+   * @param type - typ mapy
    */
   public void setMapType(String type) {
     this.mapType=type;
@@ -113,7 +113,7 @@ public class Config implements Serializable {
 
   /**
    * Vraci vychozi stred mapy
-   * @return
+   * @return stred mapy
    */
   public GPSPoint getMapCenter() {
     return mapCenter;
@@ -129,7 +129,7 @@ public class Config implements Serializable {
 
   /**
    * Vrati vychozi zoom mapy
-   * @return
+   * @return zoom
    */
   public short getMapZoom() {
     return mapZoom;

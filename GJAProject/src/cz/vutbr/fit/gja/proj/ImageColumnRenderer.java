@@ -16,7 +16,7 @@ import javax.swing.table.TableCellRenderer;
 /**
  * Vlastni renderer pro sloupec komponenty JTable, ktery zobrazuje obrazek
  *
- * @author Pavel Dziadzio
+ * @author Martin Falticko
  */
 public class ImageColumnRenderer extends JLabel implements TableCellRenderer {
 

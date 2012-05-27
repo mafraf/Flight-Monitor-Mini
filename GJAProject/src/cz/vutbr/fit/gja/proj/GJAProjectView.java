@@ -34,6 +34,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import org.jdesktop.application.Application;
+import gnu.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 /**
  * The application's main frame.
@@ -57,7 +63,18 @@ public class GJAProjectView extends FrameView {
   /** Priznak zablokovani zmeny stavu timeSlideru **/
   private boolean sliderDisable = false;
   
+  /** Priznak, ze bezi druhe vlakno se ctenim aktualnich dat */
+  volatile boolean  runSerial=false;
+  volatile boolean endSerialReq=false;
+  /** Struktura serioveho portu */
+  SerialPort serialPort;
+  /** Streamy serioveho portu */
+  private InputStream inputStream;
+	private OutputStream outputStream;
+  private Thread reader;
+  
   private TelemetryData.TelemetryVar latitude=null,longitude=null,kurs=null,kvalit=null;
+ 
 
   /**
    * Konstruktor vytvori potrebne objekty a navaze je na udalosti
@@ -101,63 +118,9 @@ public class GJAProjectView extends FrameView {
     actScroll.getVerticalScrollBar().setUnitIncrement(16);
     actPanel.setLayout(new WrapLayout(WrapLayout.LEFT));
     jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
-    //int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
-/*        for (int i = 0; i < busyIcons.length; i++)
-    {
-    busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
-    }
-    busyIconTimer = new Timer(busyAnimationRate, new ActionListener()
-    {
-
-    public void actionPerformed(ActionEvent e)
-    {
-    busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
-    statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
-    }
-    });*/
-    //idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
-    //statusAnimationLabel.setIcon(idleIcon);
+ 
     progressBar.setVisible(false);
-
-    // connecting action tasks to status bar via TaskMonitor
-       /* TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
-    taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener()
-    {
-
-    public void propertyChange(java.beans.PropertyChangeEvent evt)
-    {
-    String propertyName = evt.getPropertyName();
-    if ("started".equals(propertyName))
-    {
-    if (!busyIconTimer.isRunning())
-    {
-    statusAnimationLabel.setIcon(busyIcons[0]);
-    busyIconIndex = 0;
-    busyIconTimer.start();
-    }
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(true);
-    } else if ("done".equals(propertyName))
-    {
-    busyIconTimer.stop();
-    statusAnimationLabel.setIcon(idleIcon);
-    progressBar.setVisible(false);
-    progressBar.setValue(0);
-    } else if ("message".equals(propertyName))
-    {
-    String text = (String) (evt.getNewValue());
-    statusMessageLabel.setText((text == null) ? "" : text);
-    messageTimer.restart();
-    } else if ("progress".equals(propertyName))
-    {
-    int value = (Integer) (evt.getNewValue());
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(false);
-    progressBar.setValue(value);
-    }
-    }
-    });*/
-
+ 
     // nastaveni ikony hlavnimu oknu
     ImageIcon i = resourceMap.getImageIcon("Application.icon"); //NOI18N
     if (i != null) {
@@ -251,6 +214,7 @@ public class GJAProjectView extends FrameView {
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         settingMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -354,7 +318,7 @@ public class GJAProjectView extends FrameView {
                 .addGap(225, 225, 225)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+                .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                 .addGap(101, 101, 101)
                 .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
@@ -383,12 +347,6 @@ public class GJAProjectView extends FrameView {
                 .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(23, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(18, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jButton2)
-                .addContainerGap(19, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addContainerGap(29, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -400,6 +358,8 @@ public class GJAProjectView extends FrameView {
                         .addComponent(animationSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                         .addComponent(jLabel5)))
                 .addGap(18, 18, 18))
+            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
         );
 
         playBtn.getAccessibleContext().setAccessibleName(resourceMap.getString("playBtn.AccessibleContext.accessibleName")); // NOI18N
@@ -617,7 +577,7 @@ public class GJAProjectView extends FrameView {
         );
         graphingData1Layout.setVerticalGroup(
             graphingData1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 200, Short.MAX_VALUE)
         );
 
         GraphComboBox.setName("GraphCombo"); // NOI18N
@@ -669,7 +629,7 @@ public class GJAProjectView extends FrameView {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(186, Short.MAX_VALUE))
+                .addContainerGap(386, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel6.TabConstraints.tabTitle"), jPanel6); // NOI18N
@@ -703,10 +663,16 @@ public class GJAProjectView extends FrameView {
         fileMenu.setName("fileMenu"); // NOI18N
 
         jMenuItem1.setAction(actionMap.get("modelyClicked")); // NOI18N
-        jMenuItem1.setLabel(resourceMap.getString("jMenuItem1.label")); // NOI18N
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
         jMenuItem1.setName("jMenuItem1"); // NOI18N
         fileMenu.add(jMenuItem1);
         jMenuItem1.getAccessibleContext().setAccessibleName(resourceMap.getString("jMenuItem1.AccessibleContext.accessibleName")); // NOI18N
+
+        jMenuItem2.setAction(actionMap.get("actualDataShow")); // NOI18N
+        jMenuItem2.setText(resourceMap.getString("jMenuItem2.text")); // NOI18N
+        jMenuItem2.setName("jMenuItem2"); // NOI18N
+        fileMenu.add(jMenuItem2);
 
         settingMenuItem.setAction(actionMap.get("settingClicked")); // NOI18N
         settingMenuItem.setText(resourceMap.getString("settingMenuItem.text")); // NOI18N
@@ -819,32 +785,7 @@ public class GJAProjectView extends FrameView {
 
    int iWid = this.actScroll.getViewportBorderBounds().width;
    int iHei = this.actScroll.getViewportBorderBounds().height;
-
-   //this.actPanel.setPreferredSize(new Dimension(iWid, -1));
-   //this.actScroll.revalidate();
-
-   // Compute the height needed to accomodate all pictures.
-   /*try {
-     int iCompCount = this.jpnlGallery.getComponentCount();
-     if( 0 == iCompCount )
-       iHei = this.jscrGallery.getViewportBorderBounds().height;
-     else {
-       FlowLayout layout = (FlowLayout)this.jpnlGallery.getLayout();
-       int iImageWid = this.jpnlGallery.getComponent(0).getWidth()  + layout.getHgap();
-       int iImageHei = this.jpnlGallery.getComponent(0).getHeight() + layout.getVgap();
-       int iImagesHoriz = (iWid - layout.getHgap()) / iImageWid;
-       int iImagesVert  = iCompCount / iImagesHoriz +  (iCompCount % iImagesHoriz == 0 ? 0 : 1);
-       iHei = iImageHei * iImagesVert + layout.getVgap();
-     }
-   } catch( Exception e ) {
-     e.printStackTrace();
-     iHei = 1000;
-   }
-
-   // Set the size.
-   this.jpnlGallery.setPreferredSize(new Dimension(iWid, iHei));
-   this.jscrGallery.revalidate();
- */
+ 
     }//GEN-LAST:event_actScrollComponentResized
 
   private void ChangeItem(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeItem
@@ -898,34 +839,7 @@ public class GJAProjectView extends FrameView {
     }
 
     public void infoUpdated(String status, int code) {
-      /*printStatus(status, code);
-      drawPanel1.clear();
-      setReservations();
-      setLines();
-      setSpeciesView(null);
-      setTimeView();
-      if(Globals.species!=null)
-      {
-      editMenuItem.setEnabled(true);
-      deleteMenuItem.setEnabled(true);
-      timeSlider.setEnabled(true);
-      }
-      else
-      {
-      timeSlider.setEnabled(false);
-      editMenuItem.setEnabled(false);
-      deleteMenuItem.setEnabled(false);
-      }
-      if(flag)
-      {
-      //Zavolano z prvku Component
-      Globals.fireSpeciesChangedEvent("", InfoEvent.CODE_INFO);
-      }
-      else
-      {
-      //Zavolano zmetody fireSpecieseee...
-
-      }*/
+  
     }
   }
 
@@ -1002,6 +916,7 @@ public class GJAProjectView extends FrameView {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1353,4 +1268,197 @@ public class GJAProjectView extends FrameView {
       //actPanel.removeAll();
     }
   }
+
+  @Action
+  public void actualDataShow()
+  {
+
+    JFrame mainFrame = GJAProjectApp.getApplication().getMainFrame();
+    CommPortDialog form=new CommPortDialog(this,mainFrame,true);
+    form.setLocationRelativeTo(mainFrame);
+    form.setVisible(true);
+  }
+  
+  public void startLoadingActual(String portName)
+  {
+    CommPortIdentifier portIdentifier;
+		boolean conn = false;
+		try {
+			portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+			if (portIdentifier.isCurrentlyOwned()) {
+        JOptionPane.showMessageDialog(null, "Sériový port je již z dřívějška otevřen", "Chyba", JOptionPane.ERROR_MESSAGE);
+			} else {
+				serialPort = (SerialPort) portIdentifier.open("RTBug_network", 2000);
+				serialPort.setSerialPortParams(250000, SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+
+				inputStream = serialPort.getInputStream();
+				outputStream = serialPort.getOutputStream();
+
+				reader = (new Thread(new SerialReader(inputStream))); 
+				reader.start();
+				runSerial = true;
+
+        int[] buffer={0x3E,0x02,0x14,0x00,0x0F,0x16,0x41,0x01,0x00,0x01,0x42,0x01,0x00,0x01,0x47,0x01,0x00,0x01,0x4,165};
+        
+        writeSerial(20, buffer);
+				conn = true;
+			}
+		} catch (Exception e) {
+	    JOptionPane.showMessageDialog(null, "Chyba sériového portu", "Chyba", JOptionPane.ERROR_MESSAGE);
+		}
+  }
+  
+  public void stopLoadingActual()
+  {
+    runSerial=false;
+  }
+  
+  
+  
+  
+  
+  
+ /**
+	 * 
+	 * 
+	 */
+	private class SerialReader implements Runnable {
+		InputStream in;
+    InputStreamReader inrdr;
+
+		public SerialReader(InputStream in) {
+			this.in = in;
+		}
+
+		public void run() {
+			 
+
+      try {
+        inrdr=new InputStreamReader(in,  "windows-1250");
+        BufferedReader bstr=new BufferedReader(inrdr);
+        String line;
+        while((line=bstr.readLine())!=null)
+        {
+          
+          System.out.println(line);
+          if(endSerialReq)
+            break;
+        }
+      
+			  serialPort.close();
+				runSerial = false;
+        
+			} catch (IOException e) { 
+				try {
+					outputStream.close();
+					inputStream.close();
+				} catch (IOException e1) {
+					 
+				}
+				serialPort.close();
+				runSerial = false;
+
+			}
+		}
+	}
+  
+  public boolean disconnect() {
+		boolean disconn = true;
+		endSerialReq = true;
+		try {
+			reader.join();
+		} catch (InterruptedException e1) {
+			disconn = false;
+		}
+		try {
+			outputStream.close();
+			inputStream.close();
+		} catch (IOException e) {
+			disconn = false;
+		}
+		serialPort.close(); 
+		return disconn;
+	}
+  
+  
+  public boolean writeSerial(String message) {
+    boolean success = false;
+    if (runSerial) {
+      try {
+        outputStream.write(message.getBytes());
+        success = true;
+      } catch (IOException e) {
+        disconnect();
+      }
+    } else {
+    }
+    return success;
+  }
+  
+  
+  
+  public boolean writeSerial(int numBytes, int message[]) {
+		boolean success = true;
+		int i;
+		 
+		if (success && runSerial) {
+			try {
+				for (i = 0; i < numBytes; ++i) {
+						outputStream.write(changeToByte(message[i]));
+				}
+			} catch (IOException e) {
+				success = false;
+				disconnect();
+			}
+		}
+		return success;
+	}
+
+	private byte changeToByte(int num) {
+		byte number;
+		int temp;
+		temp = num;
+		if (temp > 255)
+			temp = 255;
+		if (temp < 0)
+			temp = 0;
+		number = (byte) temp;
+		return number;
+	}
+  
+
+   private static int getCRC16Hex(String message) {
+        byte[] bytes = message.getBytes();
+
+        int crc = 0;
+        for (int i = 0; i < bytes.length; i++) {
+            crc = crc_update(crc, bytes[i]);
+        }
+        return crc;
+    }
+
+   private static int getCRC16Int(int num,int[] arr) {
+
+        int crc = 0;
+        for (int i = 0; i < num; i++) {
+            crc = crc_update(crc, (byte)arr[i]);
+        }
+        return crc;
+    }
+
+// uint16_t crc_update(uint16_t crc, uint8_t data) {
+//     data ^= (uint8_t)(crc) & (uint8_t)(0xFF);
+//     data ^= data << 4;
+//     return ((((uint16_t)data << 8) | ((crc & 0xFF00) >> 8))
+//            ^ (uint8_t)(data >> 4) ^ ((uint16_t)data << 3));
+// }
+    private static int crc_update(int crc, byte data) {
+        data ^= crc & 0xFF;
+        data ^= data << 4;
+        return ((((int) data << 8) | ((crc & 0xFF00) >> 8)) ^ (byte) (data >> 4) ^ ((int) data << 3));
+        /////return ((((int) data << 8) | ((crc >> 8) & 0xFF)) ^ (byte) (data >> 4) ^ ((int) data << 3));
+        //return ((((uint16_t)data << 8) | ((crc >> 8) & 0xff)) ^ (uint8_t)(data >> 4) ^ ((uint16_t)data << 3));
+    }
+    
 }

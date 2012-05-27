@@ -14,10 +14,11 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
+import gnu.io.*;
 
 /**
  *
- * @author Mafio
+ * @author Martin Falticko
  */
 public class TelemetryData {
 
@@ -36,6 +37,10 @@ public class TelemetryData {
   /** Typ dat - 37 bitu */
   public static final int T_DATA37 = 12;
 
+  /**
+   * Vrati priznak, jestli jsou data naplnena
+   * @return Priznak, ze data nejsou prazdna
+   */
   public boolean isEmpty() {
     return data.isEmpty();
   }
@@ -43,25 +48,42 @@ public class TelemetryData {
   /** Info o pouzitem senzoru */
   public static class TelemetrySensor implements Comparable<TelemetrySensor> {
 
+    /** ID senzoru */
     long id;
+    /** Nazev senzoru */
     String name;
+    /** Promenne senzoru, udaje, ktere jsou pouzite */
     TreeSet<TelemetryVar> variables = new TreeSet<TelemetryVar>();
 
+    /**
+     * Nazev senzoru
+     * @return Nazev senzoru
+     */
     public String getName() {
       return this.name;
     }
 
+    /**
+     * Konstruktor
+     * @param _id ID senzoru
+     * @param _name Nazev senzoru
+     */
     public TelemetrySensor(long _id, String _name) {
       id = _id;
       name = _name;
     }
 
+    /**
+     * Vlozi novou promennou k existujisimu senzoru
+     * @param v promenna senzoru
+     */
     public void addVariable(TelemetryVar v) {
       variables.add(new TelemetryVar(v));
     }
 
     /*
      * Vrati seznam vsech promennych
+     * @return Seznam promennych daneho senzoru
      */
     public TreeSet<TelemetryVar> getVariables() {
       return variables;
@@ -69,6 +91,7 @@ public class TelemetryData {
 
     /**
      * Ziska odkaz ze seznamu letovych hodnot
+     * @param param parametr
      */
     public TelemetryVar getVar(int param) {
       for (TelemetryVar v : variables) {
@@ -79,6 +102,11 @@ public class TelemetryData {
       return null;
     }
 
+    /**
+     * Porovnani dvou telem. senzoru
+     * @param o Porovnavana hodnota
+     * @return 1...greater
+     */
     public int compareTo(TelemetrySensor o) {
       if (this.id > o.id) {
         return 1;
@@ -90,16 +118,28 @@ public class TelemetryData {
     }
   };
 
-  /** Info o zobrazene promenne */
+  /** 
+   * Info o zobrazene promenne
+   */
   public static class TelemetryVar implements Comparable<TelemetryVar> {
 
+    /** Cislo parametru*/
     int param;
+    /** Jmeno parametru */
     String name;
+    /** Jednotka promenne parametru */
     String unit;
+    /** Casosberna data prirazena k danemu parametru */
     ArrayList<TelemetryItem> data;
     /**Maximalni a minimalni hodnoty */
     double maxValue = 0.0, minValue = 0.0;
 
+    /**
+     * Konstruktor
+     * @param _param cislo parametru
+     * @param _name jmeno parametru
+     * @param _unit jednotka
+     */
     TelemetryVar(int _param, String _name, String _unit) {
       param = _param;
       name = _name;
@@ -107,6 +147,10 @@ public class TelemetryData {
       data = new ArrayList<TelemetryItem>();
     }
 
+    /**
+     * Kopirovaci konstruktor
+     * @param e
+     */
     public TelemetryVar(TelemetryVar e) {
       param = e.param;
       name = e.name;
@@ -114,25 +158,45 @@ public class TelemetryData {
       data = new ArrayList<TelemetryItem>(e.data);
     }
 
+    /**
+     * Prida novou polozku do casosbernych dat
+     * @param i data
+     */
     public void addItem(TelemetryItem i) {
       data.add(new TelemetryItem(i));
     }
 
+    /**
+     * @return Jednotka promenne
+     */
     public String getUnit() {
       return this.unit;
     }
+    /**
+     * @return Jmeno promenne
+     */
     public String getName() {
       return this.name;
     }
 
+    /**
+     * @return Maximalni hodnota promenne
+     */
     public double getMax() {
       return maxValue;
     }
 
+    /**
+     * @return Minimalni hodnota promenne
+     */
     public double getMin() {
       return minValue;
     }
 
+    /**
+     * Prepis na retezec
+     * @return
+     */
     @Override
     public String toString() {
       return name + " \t" + "[" + unit + "]";
@@ -164,10 +228,19 @@ public class TelemetryData {
       return 0.0;
     }
 
+    /**
+     * Porovnani dvou promennych
+     * @param o
+     * @return
+     */
     public int compareTo(TelemetryVar o) {
       return this.param - o.param;
     }
 
+    /**
+     *
+     * @return Pocet desetinnych mist
+     */
     public int getDecimals()
     {
       if(data.size()>0)
@@ -175,7 +248,10 @@ public class TelemetryData {
       else
         return 0;
     }
-    
+    /**
+     *
+     * @return Typ promenne (1-15)
+     */
     public int getType()
     {
       if(data.size()>0)
@@ -184,6 +260,10 @@ public class TelemetryData {
         return 0;
     }
 
+    /**
+     *
+     * @return Hodnota double aproximovana v zadanem case
+     */
     public double getDoubleAt(double time) {
       time = time * 1000;
       if (data.size() == 0) {
@@ -210,7 +290,12 @@ public class TelemetryData {
         return 0;
       }
     }
-    
+
+    /**
+     * Vrati uhlovy kurz v zadanem casu
+     * @param time cas
+     * @return vypocteny cas
+     */
     public double getDoubleCourseAt(double time) {
       time = time * 1000;
       if (data.size() == 0) {
@@ -246,7 +331,11 @@ public class TelemetryData {
     }
     
     
-    
+    /**
+     * Vrati hodnotu tyu Int v zadanem case
+     * @param time
+     * @return
+     */
     public double getIntAt(double time) {
       time = time * 1000;
       if (data.size() == 0) {
@@ -268,7 +357,10 @@ public class TelemetryData {
       }
     }
 
-
+    /**
+     *
+     * @return Seznam casosbernych dat
+     */
     public ArrayList<TelemetryItem> getItems() {
       return this.data;
     }
@@ -277,11 +369,22 @@ public class TelemetryData {
   /** Polozka zaznamu telemetrie */
   public static class TelemetryItem implements Comparable<TelemetryItem> {
 
+    /** Typ dat(1-15) */
     private int dataType;
+    /** Pocet deset. mist */
     private int decimals;
+    /** Hodnota */
     private int value;
+    /** casove razitko od zacatku letu */
     private long timestamp;
 
+    /**
+     * Konstruktor
+     * @param type Typ
+     * @param dec pocet des. mist
+     * @param _value hodnota
+     * @param _timestamp casove razitko
+     */
     TelemetryItem(int type, int dec, int _value, long _timestamp) {
       dataType = type;
       decimals = dec;
@@ -289,6 +392,10 @@ public class TelemetryData {
       timestamp = _timestamp;
     }
 
+    /**
+     * Kopirovaci konstruktor
+     * @param i
+     */
     TelemetryItem(TelemetryItem i) {
       dataType = i.dataType;
       decimals = i.decimals;
@@ -296,13 +403,17 @@ public class TelemetryData {
       timestamp = i.timestamp;
     }
 
+    /**
+     *
+     * @return Zjisti typ dat
+     */
     public int getType() {
       return dataType;
     }
 
     /**
      * Vrati udaj typu Double
-     * @return
+     * @return aktualni hodnota
      */
     public double getDouble() {
       switch (dataType) {
@@ -329,6 +440,10 @@ public class TelemetryData {
       return value;
     }
 
+    /**
+     *
+     * @return Porovnani dvou objektu
+     */
     public int compareTo(TelemetryItem o) {
       if (this.timestamp > o.timestamp) {
         return 1;
@@ -339,14 +454,26 @@ public class TelemetryData {
       }
     }
 
+    /**
+     *
+     * @return casove razitko  vsekundach
+     */
     private long getTimestamp() {
       return this.timestamp;
     }
 
+    /**
+     * Nastavi casove razitko
+     * @param l
+     */
     private void setTimestamp(long l) {
       this.timestamp = l;
     }
 
+    /**
+     *
+     * @return Pocet desetinnych mist
+     */
     private int getDecimals() {
       return decimals;
     }
@@ -380,6 +507,10 @@ public class TelemetryData {
     return null;
   }
 
+  /**
+     *
+     * @return Maximalni cas behem letu
+     */
   public double getMaxTimestamp() {
     return maxTimestamp;
   }
@@ -418,7 +549,7 @@ public class TelemetryData {
 
   /**
    * Nahraje soubor jml, ktery je zalozeny na XML
-   * @param file
+   * @param file nazev souboru
    * @return
    */
   boolean loadJML(String filename) 
@@ -538,6 +669,31 @@ public class TelemetryData {
       JOptionPane.showMessageDialog(null, "Chyba na řádku " + String.valueOf(line) + ", " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
       return false;
     }
+  }
+
+
+  void loadActual()
+  {
+    /*int prepMsg_TxExtRxEnable(uchar *msg)
+    {
+    int len=0;
+    unsigned short ui;
+    // 3E 02 14 00 0F 16 41 01 00 01 42 01 00 01 47 01 00 01 ( 2B- CRC)
+      msg[len++]=0x3E;
+      msg[len++]=0x02;
+      msg[len++]=0x00; // délka (doplní se později)
+      msg[len++]=0x00; // vyšší bajt délky
+      msg[len++]=0x0F; // counter
+      msg[len++]=0x16;
+      msg[len++]=0x41; msg[len++]=0x01; msg[len++]=0x00; msg[len++]=0x01;
+      msg[len++]=0x42; msg[len++]=0x01; msg[len++]=0x00; msg[len++]=0x01;
+      msg[len++]=0x47; msg[len++]=0x01; msg[len++]=0x00; msg[len++]=0x01;
+      msg[2]=len+2; // úprava bajtu s délkou
+      ui=getCrc16(msg,len);
+      msg[len++]=LOBYTE(ui);
+      msg[len++]=HIBYTE(ui);
+      return(len);
+}*/
   }
 
   /**

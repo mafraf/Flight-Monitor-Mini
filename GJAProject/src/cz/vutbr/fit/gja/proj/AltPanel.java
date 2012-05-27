@@ -1,7 +1,3 @@
-/**
- * @author Ondrej Vagner
- */
-
 package cz.vutbr.fit.gja.proj;
 
 import javax.swing.*;
@@ -10,8 +6,8 @@ import javax.imageio.*;
 import cz.vutbr.fit.gja.proj.utils.*;
 
 /**
- * @class AltPanel
- * @brief Trida pro vykresleni a obsluhu panelu vyskomeru
+ * Trida pro vykresleni a obsluhu panelu vyskomeru
+ * @author Ondrej Vagner
  */
 public class AltPanel extends JPanel implements PanelInterface
 {

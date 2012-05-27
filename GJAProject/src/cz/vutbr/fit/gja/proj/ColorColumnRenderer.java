@@ -14,7 +14,7 @@ import javax.swing.table.TableCellRenderer;
 /**
  * Vlastni renderer pro sloupec komponenty JTable, ktery vykresluje barvu na pozadi
  *
- * @author Pavel Dziadzio
+ * @author Martin Falticko
  */
 public class ColorColumnRenderer extends JLabel implements TableCellRenderer {
 

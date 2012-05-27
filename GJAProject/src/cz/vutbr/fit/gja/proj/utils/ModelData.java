@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Mafio
+ * @author Martin Falticko
  */
 public class ModelData 
 {
@@ -83,8 +83,8 @@ public class ModelData
   
   /**
    * Nacte modely ze zadane cesty ve filesystemu
-   * @param path
-   * @return 
+   * @param path cesta k modelu
+   * @return arraylist
    */
   public static ArrayList<ModelData> LoadModels(String path)
   {

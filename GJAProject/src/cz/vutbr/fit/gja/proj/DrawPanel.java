@@ -936,7 +936,7 @@ public class DrawPanel extends JPanel implements Runnable
 
     /**
      * Ziska novy kontrolni bod v souradnicich obrazovky
-     * @return
+     * @return kontrolni bod
      */
     protected Point getControlPoint()
     {

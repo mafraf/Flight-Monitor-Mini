@@ -1,7 +1,3 @@
-/**
- * @author Ondrej Vagner
- */
-
 package cz.vutbr.fit.gja.proj;
 
 import java.awt.font.*;
@@ -12,8 +8,8 @@ import java.util.*;
 import cz.vutbr.fit.gja.proj.utils.*;
  
 /**
- * @class GraphingData
- * @brief Trida pro vykresleni a obsluhu panelu grafu
+ * Trida pro vykresleni a obsluhu panelu grafu
+ * @author Ondrej Vagner
  */
 public class GraphingData extends JPanel implements PanelInterface
 {

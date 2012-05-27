@@ -12,7 +12,7 @@ package cz.vutbr.fit.gja.proj;
 
 /**
  *
- * @author Mafio
+ * @author Martin Falticko
  */
 public class ModelFrame extends javax.swing.JFrame {
 
@@ -144,17 +144,7 @@ public class ModelFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-  /**
-   * @param args the command line arguments
-   */
-  public static void main(String args[]) {
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-      public void run() {
-        new ModelFrame().setVisible(true);
-      }
-    });
-  }
+ 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

@@ -12,7 +12,7 @@ package cz.vutbr.fit.gja.proj;
 
 /**
  *
- * @author Mafio
+ * @author Martin Falticko
  */
 public class ActValPanel extends javax.swing.JPanel {
 

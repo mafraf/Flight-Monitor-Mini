@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * GPS souradnice
  *
- * @author Pavel Dziadzio
+ * @author Martin Falticko
  */
 public class GPSPoint implements Serializable {
 

@@ -26,7 +26,7 @@ import javax.imageio.ImageIO;
 /**
  * Popdora mapovych podkladu z Microsoft Bing maps static.
  * 
- * @author Pavel Dziazio, Martin Falticko
+ * @author Ondrej Vagner, Martin Falticko
  */
 public class BingMapsStat {
 
@@ -91,7 +91,7 @@ public class BingMapsStat {
 
   /**
    * Vrati GPS souradnice stredu mapy
-   * @return
+   * @return stredovy bod
    */
   public GPSPoint getCenter() {
     return this.mapCenter;
@@ -99,7 +99,7 @@ public class BingMapsStat {
 
   /**
    * Vrati zoom mapy
-   * @return
+   * @return zoom
    */
   public int getZoom() {
     return this.zoom;
@@ -117,7 +117,7 @@ public class BingMapsStat {
 
   /**
    * Vrati sirku mapy
-   * @return
+   * @return sirka
    */
   public int getWidth() {
     return this.width;
@@ -125,7 +125,7 @@ public class BingMapsStat {
 
   /**
    * Vrati vysku mapy
-   * @return
+   * @return vyska
    */
   public int getHeight() {
     return this.height;
@@ -133,7 +133,7 @@ public class BingMapsStat {
 
   /**
    * Vrati typ mapy (TYPE_xxxx)
-   * @return
+   * @return format mapy
    */
   public String getFormat() {
     return this.format;
@@ -141,7 +141,7 @@ public class BingMapsStat {
 
   /**
    * Vraci true, pokud je obrazek mapy korektne nacten a lze jej pouzit.
-   * @return
+   * @return priznak, ze je nahrany
    */
   public boolean isMapLoaded() {
     return (this.imageData != null);
@@ -156,7 +156,7 @@ public class BingMapsStat {
    * @param format  typ mapy (BingMapsStat.TYPE_xxx)
    * @param x   Relativni vzdalenost od kontrolniho bodu v ose X
    * @param y   Relativni vzdalenost od kontrolniho bodu v ose Y
-   * @return
+   * @return priznak uspechu
    * @throws IOException
    */
   public boolean loadMapImage(int width, int height, GPSPoint gps, int zoom, String format,int x, int y) throws IOException {
@@ -187,7 +187,7 @@ public class BingMapsStat {
 
   /**
    * Vrati obrazek mapy jako objekt java.awt.Image
-   * @return
+   * @return Image
    * @throws IllegalStateException
    * @throws java.io.IOException
    */
@@ -265,7 +265,7 @@ public class BingMapsStat {
    * Tu lze pak pouzit k vypoctum posunu a pozic bodu nad mapou.
    *
    *
-   * @return
+   * @return BingMapProjection
    * @throws IllegalStateException
    */
   public BingMapsProjection getProjection() throws IllegalStateException {
@@ -285,7 +285,7 @@ public class BingMapsStat {
    * @param gps     GPS souradnice stredu mapy
    * @param zoom    uroven priblizeni (1-22)
    * @param format  typ mapy (BingMapsStat.TYPE_xxx)
-   * @return
+   * @return URL
    */
   public String getMapUrl(int width, int height, GPSPoint gps, int zoom, String format) {
     // pouzivam format s parametrem Locale nastavenym na null, aby byla v cisle des. tecka a ne podle nastaveni systemu pripadne carka

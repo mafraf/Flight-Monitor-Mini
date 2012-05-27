@@ -1,14 +1,10 @@
-/**
- * @author Ondrej Vagner
- */
-
 package cz.vutbr.fit.gja.proj;
 
 import cz.vutbr.fit.gja.proj.utils.*;
 
 /**
- * @interface PanelInterface
- * @brief Rozhrani pro panely uakzatelu a graf
+ * Rozhrani pro panely ukazatelu a graf
+ * @author Ondrej Vagner
  */
 public interface PanelInterface 
 {

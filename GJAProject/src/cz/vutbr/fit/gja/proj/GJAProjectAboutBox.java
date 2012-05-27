@@ -9,7 +9,7 @@ import org.jdesktop.application.Action;
 
 /**
  * About dialog
- * @author Pavel Dziadzio
+ * @author Martin Falticko
  */
 public class GJAProjectAboutBox extends javax.swing.JDialog {
 

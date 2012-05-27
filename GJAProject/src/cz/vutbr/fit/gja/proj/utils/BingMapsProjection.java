@@ -12,7 +12,7 @@ import java.awt.Point;
  * Umoznuje snadny prevod bodu v GPS souradnicich na souradnice pixelu
  * v obrazku mapy o urcenem rozmeru, stredu a zoomu.
  *
- * @author Pavel Dziadzio
+ * @author Martin Falticko
  *
  */
 public class BingMapsProjection {
@@ -78,7 +78,7 @@ public class BingMapsProjection {
 
   /**
    * Vraci zoom, pro nez byla projekce inicializovana.
-   * @return
+   * @return zoom
    */
   public int getZoom() {
     return this.zoom;
@@ -86,8 +86,8 @@ public class BingMapsProjection {
 
   /**
    * Vrati vzdalenost v pixelech od pocatku souradnic pro bod zadany pomoci GPS
-   * @param gps
-   * @return
+   * @param gps GPS souradnice
+   * @return pole bodu
    */
   public long[] GPSToPixelsFromGlobeCenter(GPSPoint gps) {
     double f = Math.min(Math.max(Math.sin(gps.lat * radiansToDegreesRatio), -0.9999d), 0.9999d);

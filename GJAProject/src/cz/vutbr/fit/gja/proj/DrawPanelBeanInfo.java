@@ -9,7 +9,7 @@ import java.beans.*;
 
 /**
  *
- * @author pavel
+ * @author Martin Falticko
  */
 public class DrawPanelBeanInfo extends SimpleBeanInfo {
 
