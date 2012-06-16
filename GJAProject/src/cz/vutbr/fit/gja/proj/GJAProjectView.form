@@ -73,7 +73,7 @@
                       <EmptySpace min="-2" pref="225" max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="timeSlider" pref="343" max="32767" attributes="0"/>
+                      <Component id="timeSlider" pref="363" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="101" max="-2" attributes="0"/>
                       <Component id="timeLabel" min="-2" pref="39" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
@@ -291,10 +291,10 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="jPanel3" alignment="0" min="0" pref="265" max="32767" attributes="1"/>
+                                  <Component id="jPanel3" alignment="0" min="0" pref="276" max="32767" attributes="1"/>
                                   <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="11" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -515,7 +515,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                      <JTabbedPaneConstraints tabName="Aktu&#xe1;ln&#xed; hodnoty">
+                      <JTabbedPaneConstraints tabName="Current values">
                         <Property name="tabTitle" type="java.lang.String" resourceKey="jPanel4.TabConstraints.tabTitle"/>
                       </JTabbedPaneConstraints>
                     </Constraint>
@@ -608,7 +608,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                      <JTabbedPaneConstraints tabName="Graf">
+                      <JTabbedPaneConstraints tabName="Graph">
                         <Property name="tabTitle" type="java.lang.String" resourceKey="jPanel6.TabConstraints.tabTitle"/>
                       </JTabbedPaneConstraints>
                     </Constraint>
@@ -740,9 +740,6 @@
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="cz.vutbr.fit.gja.proj.GJAProjectView" id="modelyClicked" methodName="modelyClicked"/>
-                </Property>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+O"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="jMenuItem1.text"/>
                 <Property name="name" type="java.lang.String" value="jMenuItem1" noResource="true"/>

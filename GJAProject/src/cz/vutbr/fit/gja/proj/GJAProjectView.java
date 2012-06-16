@@ -120,6 +120,7 @@ public class GJAProjectView extends FrameView {
     jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
  
     progressBar.setVisible(false);
+    jMenuItem2.setVisible(false);
  
     // nastaveni ikony hlavnimu oknu
     ImageIcon i = resourceMap.getImageIcon("Application.icon"); //NOI18N
@@ -1428,37 +1429,5 @@ public class GJAProjectView extends FrameView {
 	}
   
 
-   private static int getCRC16Hex(String message) {
-        byte[] bytes = message.getBytes();
-
-        int crc = 0;
-        for (int i = 0; i < bytes.length; i++) {
-            crc = crc_update(crc, bytes[i]);
-        }
-        return crc;
-    }
-
-   private static int getCRC16Int(int num,int[] arr) {
-
-        int crc = 0;
-        for (int i = 0; i < num; i++) {
-            crc = crc_update(crc, (byte)arr[i]);
-        }
-        return crc;
-    }
-
-// uint16_t crc_update(uint16_t crc, uint8_t data) {
-//     data ^= (uint8_t)(crc) & (uint8_t)(0xFF);
-//     data ^= data << 4;
-//     return ((((uint16_t)data << 8) | ((crc & 0xFF00) >> 8))
-//            ^ (uint8_t)(data >> 4) ^ ((uint16_t)data << 3));
-// }
-    private static int crc_update(int crc, byte data) {
-        data ^= crc & 0xFF;
-        data ^= data << 4;
-        return ((((int) data << 8) | ((crc & 0xFF00) >> 8)) ^ (byte) (data >> 4) ^ ((int) data << 3));
-        /////return ((((int) data << 8) | ((crc >> 8) & 0xFF)) ^ (byte) (data >> 4) ^ ((int) data << 3));
-        //return ((((uint16_t)data << 8) | ((crc >> 8) & 0xff)) ^ (uint8_t)(data >> 4) ^ ((uint16_t)data << 3));
-    }
     
 }
