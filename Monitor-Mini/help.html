@@ -1,0 +1,45 @@
+<html>
+<body>
+<h1>
+Flight Monitor Mini - A Simple Program for Visualisation of Telemetry Data
+</h1>
+The primary goal of this application is to view all data measured during a single flight
+with an RC model. This visualization was made as simple as possible. The application is 
+able to incorporate background images downloaded from BingMaps to display a flight path.
+Downloading maps requires a stable internet connection.  
+<br><br>
+<img src="file:scr.png">
+<br><br>
+<h2>
+User Interface
+</h2>
+<b>Main menu</b> of the program is dedicated to load a file containing flight data or to set user preferences:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Load data from file</b></td><td> - loads telemetry files of DC-16. Supported formats are *.log or *.jml.</td>
+<tr><td><b>Settings</b></td><td> - set basic user preferences</td>
+</table><br>
+<b>The top panel</b> offers following functions:<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Zoom +/- </b></td><td> - scale the map view in or out</td>
+<tr><td><b>Time Slider</b></td><td> - Current position of timestamp in a file</td>
+<tr><td><b>Play Speed</b></td><td> - Speed of playing the animation, 1 = realtime</td>
+<tr><td><b>Play</b></td><td> - Starts animation</td>
+<tr><td><b>Stop</b></td><td> - Stops animation</td>
+<tr><td><b>Map Type</b></td><td> - Switch between normal map and aerial map</td>
+</table><br>
+<b>Left Panel</b> contains two large clocks. The first one shows current altitude and the second contains speed indication.<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Data type </b></td><td> - select a parameter to show</td>
+</table><br>
+<b>Bottom panel</b> contains two tabs - Current values and a graph with one variable at a time.<br><br>
+<table cellspacing="1" cellpadding="2" border="1px" bordercolor="black">
+<tr><td><b>Data type </b></td><td> - select a parameter to show</td>
+</table><br>
+<h2>
+Map
+</h2>
+In the map there is drawn a complete flight trajectory (with condition of using GPS module).
+Interaction with the map is done using the mouse - clicking and scrolling.
+<br><br>
+</body>
+</html>
