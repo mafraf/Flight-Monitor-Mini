@@ -149,7 +149,7 @@ public class GraphingData extends JPanel implements PanelInterface
           g2.drawString(s, sx, sy);       
         }
 
-        s = "Čas";
+        s = "Time";
         sy = h - PAD - down + (PAD - sh)/2 + lm.getAscent();
         sw = (float)font.getStringBounds(s, frc).getWidth();
         sx = (w - sw);
